@@ -26,7 +26,7 @@ Next, access the data and get it in a Pandas DataFrame.
     ```
 
 3. The API request can be made as shown below. The URL contains all the query parameters and must be provided in the format - 
-"http://data.localised-project.eu/api/v1/<resolution>/?api_key=<API key>&region=<region code>&type=<request type>". For more information, please refer to the [API documentation](http://data.localised-project.eu/api/v1/docs/)
+"http://data.localised-project.eu/api/v1/< resolution >/?api_key=< API key >&region=< region code >&type=< request type >". For more information, please refer to the [API documentation](http://data.localised-project.eu/api/v1/docs/)
     ```bash
     response = requests.get("http://data.localised-project.eu/api/v1/NUTS3/?api_key=S3cr3TK3y&region=DEA23&type=data")
     ```
