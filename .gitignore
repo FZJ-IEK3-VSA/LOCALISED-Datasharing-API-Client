@@ -1,0 +1,6 @@
+# DotEnv configuration
+.env
+
+# data files 
+*.json
+*.csv

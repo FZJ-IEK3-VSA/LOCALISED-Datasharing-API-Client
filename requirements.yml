@@ -3,3 +3,4 @@ dependencies:
 - pip 
 - pandas 
 - anaconda::requests
+- python-dotenv
