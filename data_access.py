@@ -10,7 +10,12 @@ from dotenv import load_dotenv, find_dotenv
 dotenv_path = find_dotenv()
 load_dotenv(dotenv_path)
 
-#get the secret API key 
+#get the secret API key.
+
+#NOTE: Please create a file named ".env" (note the dot) in the repository and save your secret key there.
+#should look something like: SECRET_API_KEY=S3cr3TK3y
+#This is then automatically loaded into your environment. 
+
 SECRET_API_KEY = os.environ.get("SECRET_API_KEY")
 
 #send API access request 

@@ -19,7 +19,8 @@ First, clone the repository and install all the required Python libraries in a f
 
 Next, access the data and get it in a Pandas DataFrame. 
 
-3. In a fresh Python file or Jupyter notebook, import the following libraries:
+3. In a fresh Python file or Jupyter notebook, import the following libraries. 
+**Note:** The `data_access.py` file in the repository is already loaded with these commands.
     ```bash
     import requests
     from pandas import json_normalize 
