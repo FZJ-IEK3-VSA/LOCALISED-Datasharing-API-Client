@@ -38,7 +38,7 @@ The request URL contains all the query parameters. **The format of the URL** -
 
 - Options for `resolution` --> Europe, NUTS0, NUTS1, NUTS2, NUTS3, LAU (Required parameter)
 
-- `api_key` --> The secret API key (Required parameter)
+- `api_key` --> The secret API key. **Note:** The key in the above URL is a dummy key. Please use the key shared with you in the email (Required parameter)
 
 - `region` --> The region code you want to filter on. If not specfied, a list of all regions are returned (Optional parameter)
 
