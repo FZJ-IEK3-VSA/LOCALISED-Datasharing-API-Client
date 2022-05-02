@@ -25,35 +25,39 @@ Next, access the data and get it in a Pandas DataFrame.
     from pandas import json_normalize 
     ```
 
-3. The command to make the API requestis given below. 
+4. The command to make the API request is given below. 
 
 The URL contains all the query parameters. **The format of the URL** - 
 `http://data.localised-project.eu/api/v1/<resolution>/?api_key=<API key>&region=<region code>&type=<request type>`. 
 
 **Parameters:**
 
-Options for `resolution` --> Europe, NUTS0, NUTS1, NUTS2, NUTS3, LAU (Required parameter)
-`api_key` --> The secret API key (Required parameter)
-`region` --> The region code you want to filter on. If not specfied, a list of all regions are returned (Optional parameter)
-`type` --> type=`data` if data needs to be accessed. If not specified, regional data is not returned (Optional parameter) 
+- Options for `resolution` --> Europe, NUTS0, NUTS1, NUTS2, NUTS3, LAU (Required parameter)
+
+- `api_key` --> The secret API key (Required parameter)
+
+- `region` --> The region code you want to filter on. If not specfied, a list of all regions are returned (Optional parameter)
+
+- `type` --> type=`data` if data needs to be accessed. If not specified, regional data is not returned (Optional parameter) 
 
 For more information, please refer to the [API documentation](http://data.localised-project.eu/api/v1/docs/)
+
     ```bash
     response = requests.get("http://data.localised-project.eu/api/v1/NUTS3/?api_key=S3cr3TK3y&region=DEA23&type=data")
     ```
 
-4. The data returned is in json format and can be accessed using the following command:
+5. The data returned is in json format and can be accessed using the following command:
     ```bash
     response_json = response.json()
     response_json
     ```
 
-5. Parts of the json file can be accessed separately. For example, the region name can be access using the following command:
+6. Parts of the json file can be accessed separately. For example, the region name can be access using the following command:
     ```bash
     response_json.get('regions')[0].get('region_name')
     ```
 
-6. Finally, all the regional data can be dumped into a Pandas DataFrame using the following command:
+7. Finally, all the regional data can be dumped into a Pandas DataFrame using the following command:
     ```bash
     data_df = json_normalize(response_json.get('regions')[0].get('region_data'))
     data_df
