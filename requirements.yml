@@ -2,7 +2,4 @@ dependencies:
 - python
 - pip 
 - pandas 
-- pytest 
-- conda-forge::jupyter
-- conda-forge::notebook
 - anaconda::requests
