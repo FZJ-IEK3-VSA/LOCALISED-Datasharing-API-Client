@@ -25,9 +25,13 @@ Next, access the data and get it in a Pandas DataFrame.
     from pandas import json_normalize 
     ```
 
-4. The command to make the API request is given below. 
+4. The command to make the API request is given below:
+    ```bash
+    request_url = "http://data.localised-project.eu/api/v1/NUTS3/?api_key=S3cr3TK3y&region=DEA23&type=data"
+    response = requests.get(request_url)
+    ```
 
-The URL contains all the query parameters. **The format of the URL** - 
+The request URL contains all the query parameters. **The format of the URL** - 
 `http://data.localised-project.eu/api/v1/<resolution>/?api_key=<API key>&region=<region code>&type=<request type>`. 
 
 **Parameters:**
@@ -41,10 +45,7 @@ The URL contains all the query parameters. **The format of the URL** -
 - `type` --> type=`data` if data needs to be accessed. If not specified, regional data is not returned (Optional parameter) 
 
 For more information, please refer to the [API documentation](http://data.localised-project.eu/api/v1/docs/)
-
-    ```bash
-    response = requests.get("http://data.localised-project.eu/api/v1/NUTS3/?api_key=S3cr3TK3y&region=DEA23&type=data")
-    ```
+    
 
 5. The data returned is in json format and can be accessed using the following command:
     ```bash
