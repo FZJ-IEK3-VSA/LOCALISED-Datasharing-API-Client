@@ -5,7 +5,7 @@ Step-by-step instructions to access data via our API client. The official API do
 
 1. Clone public repository or repository of your choice first:
     ```bash
-    git clone https://github.com/FZJ-IEK3-VSA/datasharing-api-client.git
+    git clone https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client.git
     ```
 
 2. Installing dependencies in a clean conda environment:
