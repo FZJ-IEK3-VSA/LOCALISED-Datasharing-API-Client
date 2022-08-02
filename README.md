@@ -10,7 +10,7 @@ Step-by-step instructions to access data via our API client. The official API do
 
 2. Installing dependencies in a clean conda environment:
     ```bash
-    cd datasharing-api-client
+    cd LOCALISED-Datasharing-API-Client
     conda env update -n datasharing_api -f requirements.yml 
     conda activate datasharing_api
     ```
