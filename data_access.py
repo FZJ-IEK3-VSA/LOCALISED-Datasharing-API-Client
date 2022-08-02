@@ -29,7 +29,7 @@ response = requests.get(request_url)
 #get the json response 
 response_json = response.json()
 
-#save the entire json response as a text file 
+#save the entire json response in a json file 
 with open('data.json', 'w') as f:
     json.dump(response_json, f)
 
