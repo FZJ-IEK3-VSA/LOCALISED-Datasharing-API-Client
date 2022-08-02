@@ -1,18 +1,18 @@
-Datasharing API
+LOCALISED Datasharing API Client
 ==============================
 
-Step-by-step instructions to access data via our datasharing API. The official API documentation can be found under http://data.localised-project.eu/api/v1/docs/)
+Step-by-step instructions to access data via our API client. The official API documentation can be found under http://data.localised-project.eu/api/v1/docs/)
 
 First, clone the repository and install all the required Python libraries in a fresh conda environment.
 
 1. Cloning the repository:
     ```bash
-    git clone https://jugit.fz-juelich.de/iek-3/shared-code/localised/datasharing-api.git
+    git clone https://jugit.fz-juelich.de/iek-3/shared-code/localised/localised-datasharing-api-client.git
     ```
 
 2. Installing dependencies in a clean conda environment:
     ```bash
-    cd datasharing-api
+    cd localised-datasharing-api-client
     conda env create -n datasharing_api -f requirements.yml 
     conda activate datasharing_api
     ```
