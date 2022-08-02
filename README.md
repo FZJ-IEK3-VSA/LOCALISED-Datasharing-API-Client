@@ -67,8 +67,9 @@ Step-by-step instructions to access data via our API client. The official API do
 
     * If you would like to save the entire response as a `.json` file, run the following commands: 
         ```bash
-            with open('data.json', 'w') as f:
-                json.dump(response_json, f)
+        import json
+        with open('data.json', 'w') as f:
+            json.dump(response_json, f)
         ```
 
     * Alternatively, all the regional data can be dumped into a Pandas DataFrame and saved using the following commands:
