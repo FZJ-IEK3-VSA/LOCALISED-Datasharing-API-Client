@@ -17,7 +17,7 @@ Step-by-step instructions to access data via our API client. The official API do
 
 3. Query the data. 
 
-    The Python file, `data_access.py`, contains an example script that queries the data of a region and saves it as `.csv` and `.json` files. Simply run the script:
+    The Python file, `data_access.py`, contains an example script that queries the data of a region and saves it as `.csv` and `.json` files. Simply run the script in the command line:
     ```bash
     python data_access.py
     ```
