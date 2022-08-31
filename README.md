@@ -11,8 +11,8 @@ Step-by-step instructions to access data via our API client. The official API do
 2. Installing dependencies in a clean conda environment:
     ```bash
     cd LOCALISED-Datasharing-API-Client
-    conda env update -n datasharing_api -f requirements.yml 
-    conda activate datasharing_api
+    conda env update -n zoomin-client -f requirements.yml 
+    conda activate zoomin-client
     ```
 
 3. Query the data. 
@@ -77,3 +77,6 @@ Step-by-step instructions to access data via our API client. The official API do
         data_df = json_normalize(response_json.get('regions')[0].get('region_data'))
         data_df.to_csv('region_data.csv')
         ```
+
+
+<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
