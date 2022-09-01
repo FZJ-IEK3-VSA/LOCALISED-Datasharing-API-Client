@@ -36,7 +36,7 @@ def get_regions(
     if region_code is not None:
         request_url = f"{request_url}&region={region_code}"
 
-    response = requests.get(request_url, timeout=60)
+    response = requests.get(request_url, timeout=240)
 
     # required format
     if result_format == "json":
@@ -73,7 +73,7 @@ def get_region_data(
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
     request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&type=data"
-    response = requests.get(request_url, timeout=120)
+    response = requests.get(request_url, timeout=480)
 
     # required format
     if result_format == "json":
