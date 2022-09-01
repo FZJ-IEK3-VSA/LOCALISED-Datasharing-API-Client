@@ -1,21 +1,21 @@
+"""Data acess functions are present in this module."""
 import os
-from typing import Any, Dict, Optional, List
+from typing import Optional, Union
 import json
 import requests
 import pandas as pd
 
 
-def save_json(data, save_path: str, save_name: str) -> None:
+def save_json(data: dict, save_path: str, save_name: str) -> None:
     """Save the response in a json file."""
     file_name = os.path.join(save_path, save_name)
 
-    with open(file_name, "w") as f:
-        json.dump(data, f)
+    with open(file_name, "w", encoding="utf-8") as f_name:
+        json.dump(data, f_name)
 
 
 def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
     """Save the data in a csv file."""
-
     file_name = os.path.join(save_path, save_name)
     data_df.to_csv(file_name)
 
@@ -28,7 +28,7 @@ def get_regions(
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "regions",
-) -> List[dict]:
+) -> Union[dict, pd.DataFrame]:
     """Return list of regions or one particular region."""
     # request
     request_url = f"http://data.localised-project.eu/api/v1/{spatial_resolution}/?api_key={api_key}"
@@ -36,7 +36,7 @@ def get_regions(
     if region_code is not None:
         request_url = f"{request_url}&region={region_code}"
 
-    response = requests.get(request_url)
+    response = requests.get(request_url, timeout=60)
 
     # required format
     if result_format == "json":
@@ -68,12 +68,12 @@ def get_region_data(
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "region_data",
-) -> Dict[str, Any]:
+) -> Union[dict, pd.DataFrame]:
     """Return data for a specified region."""
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
     request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&type=data"
-    response = requests.get(request_url)
+    response = requests.get(request_url, timeout=120)
 
     # required format
     if result_format == "json":
