@@ -2,6 +2,7 @@ import os
 import pytest
 from dotenv import load_dotenv, find_dotenv
 
+
 @pytest.fixture(scope="session")
 def api_key():
     # find .env automagically by walking up directories until it's found

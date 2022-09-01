@@ -12,13 +12,18 @@ def test_get_regions(api_key, spatial_resolution):
     output = client.get_regions(api_key, spatial_resolution)
     assert output.get("resolution") == spatial_resolution
 
-@pytest.mark.parametrize(
-    "result_format", ["json", "df"]
-)
+
+@pytest.mark.parametrize("result_format", ["json", "df"])
 def test_save_regions(api_key, result_format):
     """Check if the results of get_regions() are saved properly."""
     save_path = os.path.join(os.path.dirname(__file__))
-    output = client.get_regions(api_key, spatial_resolution="NUTS0", result_format=result_format, save_result=True, save_path=save_path)
+    output = client.get_regions(
+        api_key,
+        spatial_resolution="NUTS0",
+        result_format=result_format,
+        save_result=True,
+        save_path=save_path,
+    )
 
     if result_format == "json":
         assert isinstance(output, dict)
@@ -34,10 +39,12 @@ def test_save_regions(api_key, result_format):
         file_name = os.path.join(save_path, "regions.csv")
         assert os.path.exists(file_name)
         os.remove(file_name)
-    
-    
+
+
 def test_get_single_region(api_key):
     """Check if filtering on a region works."""
-    region_code="DEA23"
-    output = client.get_regions(api_key, spatial_resolution="NUTS3", region_code=region_code)
-    assert output.get("regions")[0].get("region_code") == region_code  
+    region_code = "DEA23"
+    output = client.get_regions(
+        api_key, spatial_resolution="NUTS3", region_code=region_code
+    )
+    assert output.get("regions")[0].get("region_code") == region_code
