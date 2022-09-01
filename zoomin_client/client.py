@@ -24,7 +24,7 @@ def get_regions(
     api_key: str,
     spatial_resolution: Optional[str] = "NUTS3",
     region_code: Optional[str] = None,
-    result_format: Optional[str] = "json",
+    result_format: Optional[str] = 'json',
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "regions",
