@@ -23,9 +23,9 @@ jobs:
         conda env update --file requirements.yml --name base
     - name: test var
       env:
-        TEST_VAR = {{ secrets.TEST_VAR }}
+        TEST_VAR: ${{ secrets.TEST_VAR }}
       run: | 
-        echo $TEST_VAR
+        echo env.TEST_VAR
     - name: Test with pytest
       run: |
         pytest tests/
