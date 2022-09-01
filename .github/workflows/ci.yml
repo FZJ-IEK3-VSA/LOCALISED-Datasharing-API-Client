@@ -25,7 +25,7 @@ jobs:
       env:
         TEST_VAR: ${{ secrets.TEST_VAR }}
       run: | 
-        echo env.TEST_VAR
+        echo ${{ secrets.TEST_VAR }}
     - name: Test with pytest
       run: |
         pytest tests/
