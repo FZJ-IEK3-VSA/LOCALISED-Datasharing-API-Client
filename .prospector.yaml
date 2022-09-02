@@ -16,6 +16,8 @@ pycodestyle:
 # pydocstyle/pep257 coding guidelines
 pydocstyle:
     run: true
+    disable: 
+      - D212
 
 # pylint
 ## enforces a coding standard, 

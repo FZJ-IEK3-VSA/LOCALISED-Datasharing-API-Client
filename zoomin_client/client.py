@@ -7,7 +7,18 @@ import pandas as pd
 
 
 def save_json(data: dict, save_path: str, save_name: str) -> None:
-    """Save the response in a json file."""
+    """
+    Save the response in a json file.
+
+    :param data: data dictionary to be saved
+    :type data: dict
+
+    :param save_path: the folder path in which to save
+    :type save_path: str
+
+    :param save_name: the file name
+    :type save_name: str
+    """
     file_name = os.path.join(save_path, save_name)
 
     with open(file_name, "w", encoding="utf-8") as f_name:
@@ -15,7 +26,18 @@ def save_json(data: dict, save_path: str, save_name: str) -> None:
 
 
 def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
-    """Save the data in a csv file."""
+    """
+    Save the data in a csv file.
+
+    :param data_df: dataframe to be saved
+    :type data_df: pd.DataFrame
+
+    :param save_path: the folder path in which to save
+    :type save_path: str
+
+    :param save_name: the file name
+    :type save_name: str
+    """
     file_name = os.path.join(save_path, save_name)
     data_df.to_csv(file_name)
 
@@ -29,7 +51,45 @@ def get_regions(
     save_path: Optional[str] = None,
     save_name: Optional[str] = "regions",
 ) -> Union[dict, pd.DataFrame]:
-    """Return list of regions or one particular region."""
+    """
+    Return list of regions or one particular region.
+
+    :param api_key: the secret api key
+    :type api_key: str
+
+    **Default arguments:**
+
+    :param spatial_resolution: the required spatial level
+        |br| * the default value is 'NUTS3'
+    :type spatial_resolution: str, one of {'Europe', 'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+
+    :param region_code: the code of the region to filter on.
+        If None, all regions are returned.
+        |br| * the default value is None
+    :type region_code: str
+
+    :param result_format: the format of the resulting data
+        |br| * the default value is 'json'
+    :type result_format: str, one of {'json', 'df'}
+
+    :param save_result: indicates whether the result should be saved.
+        The result is saved as .json if `result_format` is 'json'
+        and as .csv if `result_format` is 'df'
+        |br| * the default value is False
+    :type save_result: bool
+
+    :param save_path: the folder path in which to save the result.
+        If None, the result is save in the same folder as this file- `client.py`
+        |br| * the default value is None
+    :type save_path: str
+
+    :param save_name: the file name of the result
+        |br| * the default value is 'regions'
+    :type save_path: str
+
+    :returns: The result
+    :rtype: dict/pd.DataFrame
+    """
     # request
     request_url = f"http://data.localised-project.eu/api/v1/{spatial_resolution}/?api_key={api_key}"
 
@@ -69,7 +129,44 @@ def get_region_data(
     save_path: Optional[str] = None,
     save_name: Optional[str] = "region_data",
 ) -> Union[dict, pd.DataFrame]:
-    """Return data for a specified region."""
+    """
+    Return data for a specified region.
+
+    :param api_key: the secret api key
+    :type api_key: str
+
+    **Default arguments:**
+
+    :param spatial_resolution: the required spatial level
+        |br| * the default value is 'NUTS3'
+    :type spatial_resolution: str, one of {'Europe', 'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+
+    :param region_code: the code of the region to filter on.
+        |br| * the default value is 'DEA23'
+    :type region_code: str
+
+    :param result_format: the format of the resulting data
+        |br| * the default value is 'json'
+    :type result_format: str, one of {'json', 'df'}
+
+    :param save_result: indicates whether the result should be saved.
+        The result is saved as .json if `result_format` is 'json'
+        and as .csv if `result_format` is 'df'
+        |br| * the default value is False
+    :type save_result: bool
+
+    :param save_path: the folder path in which to save the result.
+        If None, the result is save in the same folder as this file- `client.py`
+        |br| * the default value is None
+    :type save_path: str
+
+    :param save_name: the file name of the result
+        |br| * the default value is 'region_data'
+    :type save_path: str
+
+    :returns: The result
+    :rtype: dict/pd.DataFrame
+    """
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
     request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&type=data"
