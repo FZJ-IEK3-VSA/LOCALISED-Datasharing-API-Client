@@ -5,8 +5,6 @@ import setuptools
 dir_path = os.path.dirname(os.path.realpath(__file__))
 with open(os.path.join(dir_path, "README.md"), mode="r", encoding="utf-8") as fh:
     long_description = fh.read()
-with open(os.path.join(dir_path, "requirements.txt"), encoding="utf-8") as f:
-    required_packages = f.read().splitlines()
 
 setuptools.setup(
     name="zoomin_client",
@@ -19,7 +17,6 @@ setuptools.setup(
     url="https://www.localised-project.eu/",
     include_package_data=True,
     packages=setuptools.find_packages(),
-    # install_requires=required_packages,
     setup_requires=["setuptools-git"],
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",

@@ -1,0 +1,66 @@
+output-format: json
+
+strictness: veryhigh
+test-warnings: true
+doc-warnings: true
+max-line-length: 150
+ignore-paths:
+  - tests
+ignore-patterns: 
+    - __init__.py # ignore all init files in the entire repo 
+
+# pycodestyle/pep8 coding guidelines   
+pycodestyle:
+    full: true
+
+# pydocstyle/pep257 coding guidelines
+pydocstyle:
+    run: true
+    disable: 
+      - D212
+
+# pylint
+## enforces a coding standard, 
+## looks for code smells, 
+## and can make suggestions about how the code could be refactored
+pylint:
+    run: true
+    disable:
+      - too-many-arguments
+
+# pyflakes
+## analyzes programs and detects various errors
+pyflakes:
+    run: true
+
+# mccabe
+## measures code complexity 
+mccabe:
+    run: true
+
+# dodgy
+## looks for things which should not be in a public project like secret keys 
+dodgy:
+    run: true
+
+# mypy 
+## type checking 
+mypy:
+  run: true
+
+# # bandit 
+# ## looks for common security issues
+# bandit:
+#   run: true
+
+# pyroma
+## a tool to check your setup.py to ensure it is following best practices 
+pyroma:
+  run: true
+
+# vulture
+## finds unused classes, functions and variables in your code
+vulture:
+  run: true
+  disable:
+    - unused-function
