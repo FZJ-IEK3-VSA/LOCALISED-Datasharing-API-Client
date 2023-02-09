@@ -46,6 +46,7 @@ def get_regions(
     api_key: str,
     spatial_resolution: Optional[str] = "NUTS3",
     region_code: Optional[str] = None,
+    country_code: Optional[str] = None,
     result_format: Optional[str] = "json",
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
@@ -65,6 +66,11 @@ def get_regions(
 
     :param region_code: the code of the region to filter on.
         If None, all regions are returned.
+        |br| * the default value is None
+    :type region_code: str
+
+    :param country_code: the code of the country to which `region_code` belongs.
+        Note: This parameter is required if `region_code` is passed.
         |br| * the default value is None
     :type region_code: str
 
@@ -94,15 +100,15 @@ def get_regions(
     request_url = f"http://data.localised-project.eu/api/v1/{spatial_resolution}/?api_key={api_key}"
 
     if region_code is not None:
-        request_url = f"{request_url}&region={region_code}"
+        request_url = f"{request_url}&region={region_code}&country={country_code}"
 
     response = requests.get(request_url, timeout=240)
 
     # required format
     if result_format == "json":
-        result = response.json()[0]
+        result = response.json()
     elif result_format == "df":
-        response_data = response.json()[0].get("regions")
+        response_data = response.json()
         result = pd.json_normalize(response_data)
     else:
         raise ValueError("Unrecognised result_format. Available options: json and df")
@@ -123,7 +129,8 @@ def get_regions(
 def get_region_data(
     api_key: str,
     spatial_resolution: Optional[str] = "NUTS3",
-    region_code: str = "DEA23",
+    region_code: Optional[str] = "DEA23",
+    country_code: Optional[str] = "DE",
     result_format: Optional[str] = "json",
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
@@ -143,6 +150,11 @@ def get_region_data(
 
     :param region_code: the code of the region to filter on.
         |br| * the default value is 'DEA23'
+    :type region_code: str
+
+    :param country_code: the code of the country to which `region_code` belongs.
+        Note: This parameter is required if `region_code` is passed.
+        |br| * the default value is 'DE'
     :type region_code: str
 
     :param result_format: the format of the resulting data
@@ -169,14 +181,14 @@ def get_region_data(
     """
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
-    request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&type=data"
+    request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&country={country_code}&type=data"
     response = requests.get(request_url, timeout=480)
 
     # required format
     if result_format == "json":
         result = response.json()
     elif result_format == "df":
-        response_data = response.json().get("regions")[0].get("region_data")
+        response_data = response.json()[0].get("region_data")
         result = pd.json_normalize(response_data)
     else:
         raise ValueError("Unrecognised result_format. Available options: json and df")

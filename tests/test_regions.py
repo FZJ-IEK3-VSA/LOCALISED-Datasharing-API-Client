@@ -5,7 +5,7 @@ from zoomin_client import client
 
 
 @pytest.mark.parametrize(
-    "spatial_resolution", ["Europe", "NUTS0", "NUTS1", "NUTS2", "NUTS3", "LAU"]
+    "spatial_resolution", ["NUTS0", "NUTS1", "NUTS2", "NUTS3", "LAU"]
 )
 def test_get_regions(api_key, spatial_resolution):
     """Check if region list is returned."""
@@ -26,8 +26,8 @@ def test_save_regions(api_key, result_format):
     )
 
     if result_format == "json":
-        assert isinstance(output, dict)
-        assert len(output.get("regions")) == 27
+        assert isinstance(output, list)
+        assert len(output) == 27
 
         file_name = os.path.join(save_path, "regions.json")
         assert os.path.exists(file_name)
@@ -44,7 +44,11 @@ def test_save_regions(api_key, result_format):
 def test_get_single_region(api_key):
     """Check if filtering on a region works."""
     region_code = "DEA23"
+    country_code = "DE"
     output = client.get_regions(
-        api_key, spatial_resolution="NUTS3", region_code=region_code
+        api_key,
+        spatial_resolution="NUTS3",
+        region_code=region_code,
+        country_code=country_code,
     )
-    assert output.get("regions")[0].get("region_code") == region_code
+    assert output[0].get("region_code") == region_code
