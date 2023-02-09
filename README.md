@@ -19,11 +19,13 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 
     **Parameters:**
 
-    - Options for `spatial_resolution` --> Europe, NUTS0, NUTS1, NUTS2, NUTS3, LAU 
+    - Options for `spatial_resolution` --> NUTS0, NUTS1, NUTS2, NUTS3, LAU 
 
     - `api_key` --> The secret API key. **Note:** Please use the key shared with you in the email 
 
-    - `region` --> If you wish to filter on a particular region, provide a region code here
+    - `region_code` --> If you wish to filter on a particular region, provide a region code here
+
+    - `country_code` --> If you wish to filter on a particular region, provide its country code here
 
 
 
