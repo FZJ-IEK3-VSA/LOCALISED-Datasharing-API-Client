@@ -19,7 +19,7 @@ def test_get_region_data(api_key, spatial_resolution, region_code, country_code)
         region_code=region_code,
         country_code=country_code,
     )
-    assert output[0].get("resolution") == spatial_resolution
+    assert output.get("resolution") == spatial_resolution
 
 
 # TODO: add data value asserts here
@@ -36,7 +36,7 @@ def test_save_region_data(api_key, result_format):
     )
 
     if result_format == "json":
-        assert isinstance(output, list)
+        assert isinstance(output, dict)
 
         file_name = os.path.join(save_path, "region_data.json")
         assert os.path.exists(file_name)

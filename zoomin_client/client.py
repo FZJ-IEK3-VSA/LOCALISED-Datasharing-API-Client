@@ -188,7 +188,7 @@ def get_region_data(
     if result_format == "json":
         result = response.json()
     elif result_format == "df":
-        response_data = response.json()[0].get("region_data")
+        response_data = response.json().get("region_data")
         result = pd.json_normalize(response_data)
     else:
         raise ValueError("Unrecognised result_format. Available options: json and df")

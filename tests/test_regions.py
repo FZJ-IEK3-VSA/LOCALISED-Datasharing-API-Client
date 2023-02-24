@@ -4,13 +4,11 @@ import pandas as pd
 from zoomin_client import client
 
 
-@pytest.mark.parametrize(
-    "spatial_resolution", ["NUTS0", "NUTS1", "NUTS2", "NUTS3", "LAU"]
-)
+@pytest.mark.parametrize("spatial_resolution", ["NUTS0", "NUTS1", "NUTS2", "NUTS3"])
 def test_get_regions(api_key, spatial_resolution):
     """Check if region list is returned."""
     output = client.get_regions(api_key, spatial_resolution)
-    assert output.get("resolution") == spatial_resolution
+    assert output[0].get("resolution") == spatial_resolution
 
 
 @pytest.mark.parametrize("result_format", ["json", "df"])
@@ -27,14 +25,14 @@ def test_save_regions(api_key, result_format):
 
     if result_format == "json":
         assert isinstance(output, list)
-        assert len(output) == 27
+        assert len(output) == 3
 
         file_name = os.path.join(save_path, "regions.json")
         assert os.path.exists(file_name)
         os.remove(file_name)
     else:
         assert isinstance(output, pd.DataFrame)
-        assert len(output) == 27
+        assert len(output) == 3
 
         file_name = os.path.join(save_path, "regions.csv")
         assert os.path.exists(file_name)
@@ -43,11 +41,11 @@ def test_save_regions(api_key, result_format):
 
 def test_get_single_region(api_key):
     """Check if filtering on a region works."""
-    region_code = "DEA23"
+    region_code = "05315000"
     country_code = "DE"
     output = client.get_regions(
         api_key,
-        spatial_resolution="NUTS3",
+        spatial_resolution="LAU",
         region_code=region_code,
         country_code=country_code,
     )
