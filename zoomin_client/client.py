@@ -182,7 +182,7 @@ def get_region_data(
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
     request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&country={country_code}&type=data"
-    response = requests.get(request_url, timeout=480)
+    response = requests.get(request_url, timeout=4800)
 
     # required format
     if result_format == "json":
