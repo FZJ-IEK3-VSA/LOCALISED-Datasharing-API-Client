@@ -30,6 +30,8 @@ def test_save_region_data(api_key, result_format):
     output = client.get_region_data(
         api_key,
         spatial_resolution="NUTS3",
+        region_code="DEA23",
+        country_code="DE",
         result_format=result_format,
         save_result=True,
         save_path=save_path,
