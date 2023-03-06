@@ -1,9 +1,20 @@
 """Data acess functions are present in this module."""
 import os
+import logging
+import http.client
 from typing import Optional, Union
 import json
 import requests
 import pandas as pd
+
+http.client.HTTPConnection.debuglevel = 1
+
+# You must initialize logging, otherwise you'll not see debug output.
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+requests_log = logging.getLogger("requests.packages.urllib3")
+requests_log.setLevel(logging.DEBUG)
+requests_log.propagate = True
 
 
 def save_json(data: dict, save_path: str, save_name: str) -> None:
@@ -44,7 +55,7 @@ def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
 
 def get_regions(
     api_key: str,
-    spatial_resolution: Optional[str] = "NUTS3",
+    spatial_resolution: str,
     region_code: Optional[str] = None,
     country_code: Optional[str] = None,
     result_format: Optional[str] = "json",
@@ -58,11 +69,10 @@ def get_regions(
     :param api_key: the secret api key
     :type api_key: str
 
-    **Default arguments:**
-
     :param spatial_resolution: the required spatial level
-        |br| * the default value is 'NUTS3'
-    :type spatial_resolution: str, one of {'Europe', 'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+    :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+
+    **Default arguments:**
 
     :param region_code: the code of the region to filter on.
         If None, all regions are returned.
@@ -97,7 +107,7 @@ def get_regions(
     :rtype: dict/pd.DataFrame
     """
     # request
-    request_url = f"http://data.localised-project.eu/api/v1/{spatial_resolution}/?api_key={api_key}"
+    request_url = f"http://data.localised-project.eu/api/v1/region_data/?api_key={api_key}&resolution={spatial_resolution}"
 
     if region_code is not None:
         request_url = f"{request_url}&region={region_code}&country={country_code}"
@@ -128,9 +138,9 @@ def get_regions(
 
 def get_region_data(
     api_key: str,
-    spatial_resolution: Optional[str] = "NUTS3",
-    region_code: Optional[str] = "DEA23",
-    country_code: Optional[str] = "DE",
+    spatial_resolution: str,
+    region_code: str,
+    country_code: str,
     result_format: Optional[str] = "json",
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
@@ -142,20 +152,17 @@ def get_region_data(
     :param api_key: the secret api key
     :type api_key: str
 
-    **Default arguments:**
-
     :param spatial_resolution: the required spatial level
-        |br| * the default value is 'NUTS3'
-    :type spatial_resolution: str, one of {'Europe', 'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+    :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
 
-    :param region_code: the code of the region to filter on.
-        |br| * the default value is 'DEA23'
+    :param region_code: the code of the region to filter on
     :type region_code: str
 
     :param country_code: the code of the country to which `region_code` belongs.
         Note: This parameter is required if `region_code` is passed.
-        |br| * the default value is 'DE'
     :type region_code: str
+
+    **Default arguments:**
 
     :param result_format: the format of the resulting data
         |br| * the default value is 'json'
@@ -181,8 +188,8 @@ def get_region_data(
     """
     # request
     base_url = "http://data.localised-project.eu/api/v1/"
-    request_url = f"{base_url}{spatial_resolution}/?api_key={api_key}&region={region_code}&country={country_code}&type=data"
-    response = requests.get(request_url, timeout=4800)
+    request_url = f"{base_url}region_data/?api_key={api_key}&resolution={spatial_resolution}&region={region_code}&country={country_code}&type=data"
+    response = requests.get(request_url, stream=True, timeout=1200)
 
     # required format
     if result_format == "json":
@@ -190,6 +197,92 @@ def get_region_data(
     elif result_format == "df":
         response_data = response.json().get("region_data")
         result = pd.json_normalize(response_data)
+    else:
+        raise ValueError("Unrecognised result_format. Available options: json and df")
+
+    # save
+    if save_result:
+        if save_path is None:
+            save_path = os.path.dirname(__file__)
+
+        if result_format == "json":
+            save_json(data=result, save_path=save_path, save_name=f"{save_name}.json")
+        else:
+            save_df(data_df=result, save_path=save_path, save_name=f"{save_name}.csv")
+
+    return result
+
+
+def get_variable_data(
+    api_key: str,
+    variable_name: str,
+    country_code: str,
+    result_format: Optional[str] = "json",
+    save_result: Optional[bool] = False,
+    save_path: Optional[str] = None,
+    save_name: Optional[str] = "variable_data",
+) -> Union[dict, pd.DataFrame]:
+    """
+    Return data for a specified variable at LAU level.
+
+    :param api_key: the secret api key
+    :type api_key: str
+
+    :param variable_name: the required variable
+    :type variable_name: str
+
+    :param country_code: the code of the country for which data should be returned
+    :type region_code: str
+
+    **Default arguments:**
+
+    :param result_format: the format of the resulting data
+        |br| * the default value is 'json'
+    :type result_format: str, one of {'json', 'df'}
+
+    :param save_result: indicates whether the result should be saved.
+        The result is saved as .json if `result_format` is 'json'
+        and as .csv if `result_format` is 'df'
+        |br| * the default value is False
+    :type save_result: bool
+
+    :param save_path: the folder path in which to save the result.
+        If None, the result is save in the same folder as this file- `client.py`
+        |br| * the default value is None
+    :type save_path: str
+
+    :param save_name: the file name of the result
+        |br| * the default value is 'variable_data'
+    :type save_path: str
+
+    :returns: The result
+    :rtype: dict/pd.DataFrame
+    """
+    # request
+    base_url = "http://data.localised-project.eu/api/v1/"
+    request_url = f"{base_url}var_data/?api_key={api_key}&country={country_code}&variable={variable_name}"
+    response = requests.get(request_url, stream=True, timeout=1200)
+
+    # required format
+    if result_format == "json":
+        result = response.json()[0]
+    elif result_format == "df":
+        response_data = response.json()[0]
+
+        result = pd.json_normalize(response_data.get("region_data"))
+
+        field_list = [
+            "var_name",
+            "var_description",
+            "var_unit",
+            "var_aggregation_method",
+            "proxy_metrics",
+        ]
+        for field in field_list:
+            if field == "proxy_metrics":
+                result[field] = ", ".join(field)
+            else:
+                result[field] = response_data.get(field, None)
     else:
         raise ValueError("Unrecognised result_format. Available options: json and df")
 
