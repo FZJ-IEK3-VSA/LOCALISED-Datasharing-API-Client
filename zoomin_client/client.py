@@ -1,20 +1,10 @@
 """Data acess functions are present in this module."""
 import os
-import logging
-import http.client
 from typing import Optional, Union
 import json
 import requests
 import pandas as pd
-
-http.client.HTTPConnection.debuglevel = 1
-
-# You must initialize logging, otherwise you'll not see debug output.
-logging.basicConfig()
-logging.getLogger().setLevel(logging.DEBUG)
-requests_log = logging.getLogger("requests.packages.urllib3")
-requests_log.setLevel(logging.DEBUG)
-requests_log.propagate = True
+from zoomin_client.utils import measure_time
 
 
 def save_json(data: dict, save_path: str, save_name: str) -> None:
@@ -203,10 +193,10 @@ def get_region_data(
     return result
 
 
+@measure_time
 def get_variable_data(
     api_key: str,
     variable_name: str,
-    region_code: str,
     country_code: str,
     result_format: Optional[str] = "json",
     save_result: Optional[bool] = False,
@@ -221,9 +211,6 @@ def get_variable_data(
 
     :param variable_name: the required variable
     :type variable_name: str
-
-    :param region_code: the code of the region to filter on
-    :type region_code: str
 
     :param country_code: the code of the country for which data should be returned
     :type region_code: str
@@ -253,32 +240,26 @@ def get_variable_data(
     :rtype: dict/pd.DataFrame
     """
     # request
-    base_url = "http://data.localised-project.eu/api/v1/"
-    request_url = f"{base_url}variable_data/?api_key={api_key}&region={region_code}&country={country_code}&variable={variable_name}"
-    response = requests.get(request_url, stream=True, timeout=240)
+    next_request_url = f"http://data.localised-project.eu/api/v1/variable_data/?api_key={api_key}&country={country_code}&variable={variable_name}"
 
-    # required format
-    if result_format == "json":
-        result = response.json()[0]
-    elif result_format == "df":
-        response_data = response.json()[0]
+    result_collection = []
+    while next_request_url is not None:
+        response = requests.get(next_request_url, stream=True, timeout=240).json()
 
-        result = pd.json_normalize(response_data.get("region_data"))
+        next_request_url = response["next"]
+        response_data = response["results"]
 
-        field_list = [
-            "var_name",
-            "var_description",
-            "var_unit",
-            "var_aggregation_method",
-            "proxy_metrics",
-        ]
-        for field in field_list:
-            if field == "proxy_metrics":
-                result[field] = ", ".join(field)
-            else:
-                result[field] = response_data.get(field)
-    else:
-        raise ValueError("Unrecognised result_format. Available options: json and df")
+        if result_format == "json":
+            result_collection.extend(response_data)
+        elif result_format == "df":
+            result_collection.append(pd.json_normalize(response_data))
+        else:
+            raise ValueError(
+                "Unrecognised result_format. Available options: json and df"
+            )
+
+    if result_format == "df":
+        result_collection = pd.concat(result_collection)
 
     # save
     if save_result:
@@ -286,8 +267,16 @@ def get_variable_data(
             save_path = os.path.dirname(__file__)
 
         if result_format == "json":
-            save_json(data=result, save_path=save_path, save_name=f"{save_name}.json")
+            save_json(
+                data=result_collection,
+                save_path=save_path,
+                save_name=f"{save_name}.json",
+            )
         else:
-            save_df(data_df=result, save_path=save_path, save_name=f"{save_name}.csv")
+            save_df(
+                data_df=result_collection,
+                save_path=save_path,
+                save_name=f"{save_name}.csv",
+            )
 
-    return result
+    return result_collection
