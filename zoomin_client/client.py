@@ -202,7 +202,7 @@ def get_variable_data(
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "variable_data",
-) -> Union[dict, pd.DataFrame]:
+) -> Union[list, pd.DataFrame]:
     """
     Return data for a specified variable at LAU level.
 
@@ -237,7 +237,7 @@ def get_variable_data(
     :type save_path: str
 
     :returns: The result
-    :rtype: dict/pd.DataFrame
+    :rtype: list/pd.DataFrame
     """
     # request
     next_request_url = f"http://data.localised-project.eu/api/v1/variable_data/?api_key={api_key}&country={country_code}&variable={variable_name}"
@@ -280,3 +280,63 @@ def get_variable_data(
             )
 
     return result_collection
+
+
+def get_variable_metadata(
+    api_key: str,
+    variable_name: str,
+    country_code: str,
+    save_result: Optional[bool] = False,
+    save_path: Optional[str] = None,
+    save_name: Optional[str] = "variable_metadata",
+) -> Union[dict, pd.DataFrame]:
+    """
+    Return data for a specified variable at LAU level.
+
+    :param api_key: the secret api key
+    :type api_key: str
+
+    :param variable_name: the required variable
+    :type variable_name: str
+
+    :param country_code: the code of the country for which data should be returned
+    :type region_code: str
+
+    **Default arguments:**
+
+    :param save_result: indicates whether the result should be saved.
+        The result is saved as .json
+        |br| * the default value is False
+    :type save_result: bool
+
+    :param save_path: the folder path in which to save the result.
+        If None, the result is save in the same folder as this file- `client.py`
+        |br| * the default value is None
+    :type save_path: str
+
+    :param save_name: the file name of the result
+        |br| * the default value is 'variable_metadata'
+    :type save_path: str
+
+    :returns: The result
+    :rtype: dict
+    """
+    # request
+    request_url = f"http://data.localised-project.eu/api/v1/variable_metadata/?api_key={api_key}&country={country_code}&variable={variable_name}"
+
+    response = requests.get(request_url, stream=True, timeout=240).json()
+
+    response_data = response["results"][0]
+
+    # save
+    if save_result:
+        if save_path is None:
+            save_path = os.path.dirname(__file__)
+
+        save_json(
+            data=response_data,
+            save_path=save_path,
+            save_name=f"{save_name}.json",
+        )
+
+    return response_data
