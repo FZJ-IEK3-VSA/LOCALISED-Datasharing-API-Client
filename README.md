@@ -17,17 +17,19 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
     conda activate zoomin-client
     ```
 
-3. Run the example Jupyter notebook `examples/data_access.ipynb` 
+3. Run the example Jupyter notebooks -  `examples/all_regions_single_variable.ipynb` and `examples/single_region_all_variables.ipynb`
 
-    **Parameters:**
+    **Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:**
 
-    - Options for `spatial_resolution` --> NUTS0, NUTS1, NUTS2, NUTS3, LAU 
+    - `api_key` --> The secret API key. **Note:** Please use the key shared with you in confidence
 
-    - `api_key` --> The secret API key. **Note:** Please use the key shared with you in the email 
+    - `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 
+
+    - `country_code` --> If you wish to filter on a particular region, provide its country code here
 
     - `region_code` --> If you wish to filter on a particular region, provide a region code here
 
-    - `country_code` --> If you wish to filter on a particular region, provide its country code here
+    - `variable_name` --> If you wish to get data for a particular variable, provide the name here
 
 
 
