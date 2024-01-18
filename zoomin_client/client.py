@@ -89,7 +89,7 @@ def get_region_metadata(
     :rtype: list/dict
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/api/v1/region_metadata/?api_key={api_key}&resolution={spatial_resolution}&country={country_code}"
+    next_request_url = f"http://data.localised-project.eu/dsp/v1/region_metadata/?api_key={api_key}&resolution={spatial_resolution}&country={country_code}"
 
     if region_code is not None:
         next_request_url = f"{next_request_url}&region={region_code}"
@@ -174,7 +174,7 @@ def get_region_data(
     :rtype: list/pd.DataFrame
     """
     # request
-    base_url = "http://data.localised-project.eu/api/v1/region_data/"
+    base_url = "http://data.localised-project.eu/dsp/v1/region_data/"
     if mini_version:
         base_url = f"{base_url}mini_version/"
 
@@ -182,6 +182,7 @@ def get_region_data(
 
     result_collection = []
     while next_request_url is not None:
+        print(next_request_url)
         response = requests.get(next_request_url, stream=True, timeout=240).json()
 
         next_request_url = response["next"]
@@ -264,7 +265,7 @@ def get_variable_metadata(
     :rtype: dict
     """
     # request
-    request_url = f"http://data.localised-project.eu/api/v1/variable_metadata/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
+    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
 
     response = requests.get(request_url, stream=True, timeout=240).json()
 
@@ -335,10 +336,11 @@ def get_variable_data(
     :rtype: list/pd.DataFrame
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/api/v1/variable_data/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
+    next_request_url = f"http://data.localised-project.eu/dsp/v1/variable_data/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
 
     result_collection = []
     while next_request_url is not None:
+        print(next_request_url)
         response = requests.get(next_request_url, stream=True, timeout=240).json()
 
         next_request_url = response["next"]
