@@ -11,8 +11,8 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 2. Installing dependencies in a clean conda environment:
     ```bash
     cd LOCALISED-Datasharing-API-Client
-    conda env update -n zoomin-client -f requirements.yml 
-    conda activate zoomin-client
+    conda env update -n dsp_client -f requirements.yml 
+    conda activate dsp_client
     ```
 
 3. Run the example Jupyter notebooks -  `examples/all_regions_single_variable.ipynb` and `examples/single_region_all_variables.ipynb`
