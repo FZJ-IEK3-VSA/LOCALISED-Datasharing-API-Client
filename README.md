@@ -15,7 +15,7 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
     conda activate dsp_client
     ```
 
-3. Run the example Jupyter notebooks -  `examples/all_regions_single_variable.ipynb` and `examples/single_region_all_variables.ipynb`
+3. Run the example Jupyter notebooks -  `examples/all_regions_data_.ipynb` and `examples/single_region_data.ipynb`
 
     **Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:**
 
