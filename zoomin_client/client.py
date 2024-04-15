@@ -121,9 +121,8 @@ def get_region_metadata(
 @measure_time
 def get_region_data(
     api_key: str,
-    spatial_resolution: str,
     region_code: str,
-    country_code: str,
+    variable_name: Optional[str] = None,
     mini_version: Optional[bool] = True,
     result_format: Optional[str] = "json",
     save_result: Optional[bool] = False,
@@ -136,16 +135,14 @@ def get_region_data(
     :param api_key: the secret api key
     :type api_key: str
 
-    :param spatial_resolution: the required spatial resolution
-    :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
-
     :param region_code: the code of the region to filter on
     :type region_code: str
 
-    :param country_code: the code of the country to which `region_code` belongs.
-    :type region_code: str
-
     **Default arguments:**
+
+    :param variable_name: the variable to filter on
+        |br| * the default value is None
+    :type variable_name: str
 
     :param mini_version: indicates if a reduced number of fields on data should be returned
         |br| * the default value is True
@@ -178,7 +175,10 @@ def get_region_data(
     if mini_version:
         base_url = f"{base_url}mini_version/"
 
-    next_request_url = f"{base_url}?api_key={api_key}&resolution={spatial_resolution}&region={region_code}&country={country_code}"
+    if variable_name is None:
+        next_request_url = f"{base_url}?api_key={api_key}&region={region_code}"
+    else:
+        next_request_url = f"{base_url}?api_key={api_key}&region={region_code}&variable={variable_name}"
 
     result_collection = []
     while next_request_url is not None:
@@ -225,7 +225,6 @@ def get_variable_metadata(
     api_key: str,
     variable_name: str,
     country_code: str,
-    spatial_resolution: str,
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "variable_metadata",
@@ -240,7 +239,7 @@ def get_variable_metadata(
     :type variable_name: str
 
     :param country_code: the code of the country for which data should be returned
-    :type region_code: str
+    :type country_code: str
 
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
@@ -265,7 +264,7 @@ def get_variable_metadata(
     :rtype: dict
     """
     # request
-    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
+    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/?api_key={api_key}&country={country_code}&variable={variable_name}"
 
     response = requests.get(request_url, stream=True, timeout=240).json()
 
@@ -306,7 +305,7 @@ def get_variable_data(
     :type variable_name: str
 
     :param country_code: the code of the country for which data should be returned
-    :type region_code: str
+    :type country_code: str
 
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
