@@ -5,6 +5,11 @@ LOCALISED Datasharing API Client
 
 Step-by-step instructions to access data, published on LOCALISED datasharing platform, via our API client. The official API documentation can be found under http://data.localised-project.eu/api/v1/docs/)
 
+0. Before you begin, please make sure you have mamba installed in your base environment:
+    ```bash
+    conda install mamba -c conda-forge
+    ```
+
 1. Clone the repository:
     ```bash
     git clone https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client.git
@@ -13,7 +18,7 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 2. Installing dependencies in a clean conda environment:
     ```bash
     cd LOCALISED-Datasharing-API-Client
-    conda env update -n dsp_client -f requirements.yml 
+    mamba env create -n dsp_client -f requirements.yml 
     conda activate dsp_client
     ```
 
