@@ -26,6 +26,6 @@ def test_save_regions(api_key):
     assert isinstance(output, list)
     assert len(output) == 401
 
-    file_name = os.path.join(save_path, "region_list.json")
+    file_name = os.path.join(save_path, "region_metadata.json")
     assert os.path.exists(file_name)
     os.remove(file_name)
