@@ -11,7 +11,6 @@ def test_get_region_list(api_key, spatial_resolution):
     assert output[0].get("resolution") == spatial_resolution
 
 
-
 def test_save_regions(api_key):
     """Check if the results of get_regions() are saved properly."""
     save_path = os.path.join(os.path.dirname(__file__))

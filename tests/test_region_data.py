@@ -14,10 +14,7 @@ from zoomin_client import client
 )
 def test_get_region_data(api_key, region_code):
     """Check if region data is returned."""
-    output = client.get_region_data(
-        api_key,
-        region_code=region_code
-    )
+    output = client.get_region_data(api_key, region_code=region_code)
     assert len(output) > 0
 
 
