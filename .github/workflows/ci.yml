@@ -22,8 +22,6 @@ jobs:
       run: |
         conda install -y python=3.11
         conda env update --file requirements.yml --name base
-        conda init
-        conda activate base
         pip install -e.
     - name: Test with Pytest
       env:
