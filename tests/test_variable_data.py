@@ -18,6 +18,7 @@ def test_get_variable_data(api_key, result_format):
     output = client.get_variable_data(
         api_key,
         variable_name="population",
+        spatial_resolution="LAU",
         country_code="ES",
         result_format=result_format,
     )
