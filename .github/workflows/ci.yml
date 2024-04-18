@@ -22,6 +22,7 @@ jobs:
       run: |
         conda install -y python=3.11
         conda env update --file requirements.yml --name base
+        pip install -e.
     - name: Test with Pytest
       env:
         SECRET_API_KEY: ${{ secrets.SECRET_API_KEY }}

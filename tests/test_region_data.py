@@ -5,21 +5,16 @@ from zoomin_client import client
 
 
 @pytest.mark.parametrize(
-    "spatial_resolution, region_code, country_code",
+    "region_code",
     [
-        # ("NUTS3", "DEA23", "DE"),#TODO: uncomment other resolutions later
-        # ("NUTS0", "DE"),
-        ("LAU", "05315000", "DE"),
+        ("DEA23"),
+        ("DE"),
+        ("DE600_02000000"),
     ],
 )
-def test_get_region_data(api_key, spatial_resolution, region_code, country_code):
+def test_get_region_data(api_key, region_code):
     """Check if region data is returned."""
-    output = client.get_region_data(
-        api_key,
-        spatial_resolution=spatial_resolution,
-        region_code=region_code,
-        country_code=country_code,
-    )
+    output = client.get_region_data(api_key, region_code=region_code)
     assert len(output) > 0
 
 
@@ -30,9 +25,7 @@ def test_save_region_data(api_key, result_format):
     save_path = os.path.join(os.path.dirname(__file__))
     output = client.get_region_data(
         api_key,
-        spatial_resolution="LAU",
-        region_code="11000000",
-        country_code="DE",
+        region_code="DE600_02000000",
         result_format=result_format,
         save_result=True,
         save_path=save_path,

@@ -18,6 +18,7 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(),
     setup_requires=["setuptools-git"],
+    python_requires=">=3.10",
     classifiers=[
         "Development Status :: 2 - Pre-Alpha",
         "Intended Audience :: Science/Research",
