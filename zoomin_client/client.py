@@ -89,9 +89,12 @@ def get_region_metadata(
     :rtype: list/dict
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/dsp/v1/region_metadata/? \
-                        api_key={api_key}&resolution={spatial_resolution} \
-                        &country={country_code}"
+    next_request_url = (
+        "http://data.localised-project.eu/dsp/v1/region_metadata/?"
+        "api_key=" + api_key + "&"
+        "resolution=" + spatial_resolution + "&"
+        "country=" + country_code
+    )
 
     if region_code is not None:
         next_request_url = f"{next_request_url}&region={region_code}"
@@ -266,8 +269,12 @@ def get_variable_metadata(
     :rtype: Any
     """
     # request
-    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/? \
-                    api_key={api_key}&country={country_code}&variable={variable_name}"
+    request_url = (
+        "http://data.localised-project.eu/dsp/v1/variable_metadata/?"
+        "api_key=" + api_key + "&"
+        "country=" + country_code + "&"
+        "variable=" + variable_name
+    )
 
     response = requests.get(request_url, stream=True, timeout=240).json()
 
@@ -338,9 +345,13 @@ def get_variable_data(
     :rtype: list/pd.DataFrame
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/dsp/v1/variable_data/? \
-                        api_key={api_key}&country={country_code} \
-                        &resolution={spatial_resolution}&variable={variable_name}"
+    next_request_url = (
+        "http://data.localised-project.eu/dsp/v1/variable_data/?"
+        "api_key=" + api_key + "&"
+        "country=" + country_code + "&"
+        "resolution=" + spatial_resolution + "&"
+        "variable=" + variable_name
+    )
 
     result_collection = []
     while next_request_url is not None:
