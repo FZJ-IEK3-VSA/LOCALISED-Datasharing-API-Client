@@ -7,6 +7,6 @@ dependencies:
 - conda-forge::notebook
 - conda-forge::black=22.3.0
 - pip:
-  - prospector[with_everything]==1.7.7
+  - prospector[with_everything]==1.10.3
   - python-dotenv
   - pytest-dotenv

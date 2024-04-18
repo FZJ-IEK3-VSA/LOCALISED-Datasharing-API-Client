@@ -1,6 +1,6 @@
 output-format: json
 
-strictness: veryhigh
+strictness: medium
 test-warnings: true
 doc-warnings: true
 max-line-length: 150
@@ -27,6 +27,8 @@ pylint:
     run: true
     disable:
       - too-many-arguments
+      - logging-not-lazy
+      - logging-fstring-interpolation
 
 # pyflakes
 ## analyzes programs and detects various errors

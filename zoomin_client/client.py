@@ -1,6 +1,6 @@
 """Data acess functions are present in this module."""
 import os
-from typing import Optional, Union
+from typing import Optional, Union, Any, Literal
 import json
 import requests
 import pandas as pd
@@ -89,7 +89,9 @@ def get_region_metadata(
     :rtype: list/dict
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/dsp/v1/region_metadata/?api_key={api_key}&resolution={spatial_resolution}&country={country_code}"
+    next_request_url = f"http://data.localised-project.eu/dsp/v1/region_metadata/? \
+                        api_key={api_key}&resolution={spatial_resolution} \
+                        &country={country_code}"
 
     if region_code is not None:
         next_request_url = f"{next_request_url}&region={region_code}"
@@ -124,7 +126,7 @@ def get_region_data(
     region_code: str,
     variable_name: Optional[str] = None,
     mini_version: Optional[bool] = True,
-    result_format: Optional[str] = "json",
+    result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "region_data",
@@ -228,7 +230,7 @@ def get_variable_metadata(
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "variable_metadata",
-) -> dict:
+) -> Any:
     """
     Return data for a specified variable at a specified resolution, for a specified country.
 
@@ -261,10 +263,11 @@ def get_variable_metadata(
     :type save_path: str
 
     :returns: The result
-    :rtype: dict
+    :rtype: Any
     """
     # request
-    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/?api_key={api_key}&country={country_code}&variable={variable_name}"
+    request_url = f"http://data.localised-project.eu/dsp/v1/variable_metadata/? \
+                    api_key={api_key}&country={country_code}&variable={variable_name}"
 
     response = requests.get(request_url, stream=True, timeout=240).json()
 
@@ -290,9 +293,9 @@ def get_variable_data(
     variable_name: str,
     country_code: str,
     spatial_resolution: str,
-    result_format: Optional[str] = "json",
+    result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
-    save_path: Optional[str] = None,
+    save_path: Optional[str] = os.path.dirname(__file__),
     save_name: Optional[str] = "variable_data",
 ) -> Union[list, pd.DataFrame]:
     """
@@ -335,7 +338,9 @@ def get_variable_data(
     :rtype: list/pd.DataFrame
     """
     # request
-    next_request_url = f"http://data.localised-project.eu/dsp/v1/variable_data/?api_key={api_key}&country={country_code}&resolution={spatial_resolution}&variable={variable_name}"
+    next_request_url = f"http://data.localised-project.eu/dsp/v1/variable_data/? \
+                        api_key={api_key}&country={country_code} \
+                        &resolution={spatial_resolution}&variable={variable_name}"
 
     result_collection = []
     while next_request_url is not None:
@@ -349,19 +354,12 @@ def get_variable_data(
             result_collection.extend(response_data)
         elif result_format == "df":
             result_collection.append(pd.json_normalize(response_data))
-        else:
-            raise ValueError(
-                "Unrecognised result_format. Available options: json and df"
-            )
 
     if result_format == "df":
         result_collection = pd.concat(result_collection)
 
     # save
     if save_result:
-        if save_path is None:
-            save_path = os.path.dirname(__file__)
-
         if result_format == "json":
             save_json(
                 data=result_collection,

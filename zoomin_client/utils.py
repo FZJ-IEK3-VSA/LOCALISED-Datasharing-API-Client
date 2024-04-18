@@ -1,3 +1,4 @@
+"""utils file."""
 import time
 from functools import wraps
 from typing import Any, Callable
@@ -8,7 +9,8 @@ logging.basicConfig(level=logging.INFO)
 
 
 def measure_time(func_call: Callable) -> Any:
-    """Wrap around a function to track the time taken by the function.
+    """
+    Wrap around a function to track the time taken by the function.
 
     :param func: Function
 
