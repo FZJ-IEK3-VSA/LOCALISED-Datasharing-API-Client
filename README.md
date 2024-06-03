@@ -31,13 +31,13 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 
     - `api_key` --> The secret API key. **Note:** Please use the key shared with you in confidence
 
-    - `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 
+    - `country_code` --> The country for which you wish to query the data. For example: "de", "es", "nl", etc
 
-    - `country_code` --> If you wish to filter on a particular region, provide its country code here
+    - `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 
 
     - `region_code` --> If you wish to filter on a particular region, provide a region code here
 
-    - `variable_name` --> If you wish to get data for a particular variable, provide the name here
+    - `variable` --> If you wish to get data for a particular variable, provide the name here
 
 
 
