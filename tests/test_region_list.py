@@ -7,7 +7,9 @@ from zoomin_client import client
 @pytest.mark.parametrize("spatial_resolution", ["NUTS1", "NUTS2", "NUTS3"])
 def test_get_region_list(api_key, spatial_resolution):
     """Check if region list is returned."""
-    output = client.get_region_metadata(api_key, spatial_resolution, country_code="DE")
+    output = client.get_region_metadata(
+        api_key, country_code="de", spatial_resolution=spatial_resolution
+    )
     assert output[0].get("resolution") == spatial_resolution
 
 
@@ -16,8 +18,8 @@ def test_save_regions(api_key):
     save_path = os.path.join(os.path.dirname(__file__))
     output = client.get_region_metadata(
         api_key,
+        country_code="de",
         spatial_resolution="NUTS3",
-        country_code="DE",
         save_result=True,
         save_path=save_path,
     )

@@ -45,8 +45,8 @@ def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
 
 def get_region_metadata(
     api_key: str,
-    spatial_resolution: str,
     country_code: str,
+    spatial_resolution: str,
     region_code: Optional[str] = None,
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
@@ -58,11 +58,11 @@ def get_region_metadata(
     :param api_key: the secret api key
     :type api_key: str
 
+    :param country_code: the code of the required country. NOTE: must be in lower case
+    :type region_code: str
+
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
-
-    :param country_code: the code of the required country
-    :type region_code: str
 
     **Default arguments:**
 
@@ -90,11 +90,12 @@ def get_region_metadata(
     """
     # request
     next_request_url = (
-        "http://data.localised-project.eu/dsp/v1/region_metadata/?"
+        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "region_metadata/?"
         "api_key=" + api_key + "&"
-        "resolution=" + spatial_resolution + "&"
-        "country=" + country_code
+        "resolution=" + spatial_resolution
     )
+    print(next_request_url)
 
     if region_code is not None:
         next_request_url = f"{next_request_url}&region={region_code}"
@@ -126,8 +127,9 @@ def get_region_metadata(
 @measure_time
 def get_region_data(
     api_key: str,
+    country_code: str,
     region_code: str,
-    variable_name: Optional[str] = None,
+    variable: Optional[str] = None,
     mini_version: Optional[bool] = True,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
@@ -140,14 +142,17 @@ def get_region_data(
     :param api_key: the secret api key
     :type api_key: str
 
+    :param country_code: the code of the required country. NOTE: must be in lower case
+    :type region_code: str
+
     :param region_code: the code of the region to filter on
     :type region_code: str
 
     **Default arguments:**
 
-    :param variable_name: the variable to filter on
+    :param variable: the variable to filter on
         |br| * the default value is None
-    :type variable_name: str
+    :type variable: str
 
     :param mini_version: indicates if a reduced number of fields on data should be returned
         |br| * the default value is True
@@ -176,14 +181,18 @@ def get_region_data(
     :rtype: list/pd.DataFrame
     """
     # request
-    base_url = "http://data.localised-project.eu/dsp/v1/region_data/"
+    base_url = (
+        f"http://data.localised-project.eu/dsp/v1/{country_code.lower()}/region_data/"
+    )
     if mini_version:
         base_url = f"{base_url}mini_version/"
 
-    if variable_name is None:
+    if variable is None:
         next_request_url = f"{base_url}?api_key={api_key}&region={region_code}"
     else:
-        next_request_url = f"{base_url}?api_key={api_key}&region={region_code}&variable={variable_name}"
+        next_request_url = (
+            f"{base_url}?api_key={api_key}&region={region_code}&variable={variable}"
+        )
 
     result_collection = []
     while next_request_url is not None:
@@ -228,8 +237,8 @@ def get_region_data(
 
 def get_variable_metadata(
     api_key: str,
-    variable_name: str,
     country_code: str,
+    variable: str,
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "variable_metadata",
@@ -240,14 +249,11 @@ def get_variable_metadata(
     :param api_key: the secret api key
     :type api_key: str
 
-    :param variable_name: the required variable
-    :type variable_name: str
-
-    :param country_code: the code of the country for which data should be returned
+    :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
 
-    :param spatial_resolution: the required spatial resolution
-    :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
+    :param variable: the required variable
+    :type variable: str
 
     **Default arguments:**
 
@@ -270,10 +276,10 @@ def get_variable_metadata(
     """
     # request
     request_url = (
-        "http://data.localised-project.eu/dsp/v1/variable_metadata/?"
+        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "variable_metadata/?"
         "api_key=" + api_key + "&"
-        "country=" + country_code + "&"
-        "variable=" + variable_name
+        "variable=" + variable
     )
 
     response = requests.get(request_url, stream=True, timeout=240).json()
@@ -297,8 +303,8 @@ def get_variable_metadata(
 @measure_time
 def get_variable_data(
     api_key: str,
-    variable_name: str,
     country_code: str,
+    variable: str,
     spatial_resolution: str,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
@@ -311,11 +317,11 @@ def get_variable_data(
     :param api_key: the secret api key
     :type api_key: str
 
-    :param variable_name: the required variable
-    :type variable_name: str
-
-    :param country_code: the code of the country for which data should be returned
+    :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
+
+    :param variable: the required variable
+    :type variable: str
 
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
@@ -346,11 +352,11 @@ def get_variable_data(
     """
     # request
     next_request_url = (
-        "http://data.localised-project.eu/dsp/v1/variable_data/?"
+        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "variable_data/?"
         "api_key=" + api_key + "&"
-        "country=" + country_code + "&"
         "resolution=" + spatial_resolution + "&"
-        "variable=" + variable_name
+        "variable=" + variable
     )
 
     result_collection = []
