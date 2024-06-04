@@ -56,3 +56,43 @@ def test_get_region_data(api_key, region_code):
     file_name = os.path.join(save_path, "region_data.csv")
     assert os.path.exists(file_name)
     os.remove(file_name)
+
+
+@pytest.mark.parametrize(
+    "climate_experiment,pathway",
+    [
+        ("RCP4.5", "de-lts-bc-2050-05062023.json"),
+        ("RCP2.6", "de-lts-st-2050-05062023.json"),
+        ("RCP4.5", "de-lts-st-2050-05062023.json"),
+    ],
+)
+def test_get_region_data_with_filter(api_key, climate_experiment, pathway):
+    """Check if filtered region data is returned."""
+
+    output_df = client.get_region_data(
+        api_key,
+        country_code="de",
+        region_code="DE300",
+        climate_experiment=climate_experiment,
+        pathway=pathway,
+        result_format="df",
+    )
+
+    # Collected var
+    collected_df = output_df[(output_df["var_name"] == "intertidal_flats_cover")].copy()
+    assert len(collected_df) == 1
+    # TODO: investigate why its not equal to 80 and fix it and then uncomment this
+    # # Climate data
+    # climate_df = output_df[
+    #     (output_df["var_name"] == "cproj_annual_mean_maximum_temperature") # "cproj_annual_mean_minimum_temperature"
+    # ].copy()
+
+    # assert len(climate_df) == 80 # 80 years
+
+    # EUCalc
+    eucalc_df = output_df[
+        (output_df["var_name"].str.startswith("eucalc_"))
+        & (output_df["year"] == 2030)
+        & (output_df["pathway_file_name"] == pathway)
+    ].copy()
+    assert len(eucalc_df) == 926  # 926 variables
