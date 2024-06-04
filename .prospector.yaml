@@ -29,6 +29,7 @@ pylint:
       - too-many-arguments
       - logging-not-lazy
       - logging-fstring-interpolation
+      - too-many-locals
 
 # pyflakes
 ## analyzes programs and detects various errors
