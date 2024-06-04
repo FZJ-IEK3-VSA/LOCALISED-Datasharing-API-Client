@@ -41,6 +41,10 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 
     - `variable` --> If you wish to get data for a particular variable, provide the name here
 
+    - `pathway` --> If you wish to filter on a particular EUCalc decarbonisation pathway, provide a pathway file name here
+
+    - `climate_experiment` --> If you wish to filter on a particular climate experiment, provide the name here
+
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>

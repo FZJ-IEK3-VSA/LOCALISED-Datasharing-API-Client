@@ -130,6 +130,8 @@ def get_region_data(
     country_code: str,
     region_code: str,
     variable: Optional[str] = None,
+    pathway: Optional[str] = None,
+    climate_experiment: Optional[str] = None,
     mini_version: Optional[bool] = True,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
@@ -153,6 +155,14 @@ def get_region_data(
     :param variable: the variable to filter on
         |br| * the default value is None
     :type variable: str
+
+    :param pathway: the EUCalc pathway file name on which to filter EUCalc data. For example: "pt-lts-bc-2050-05062022.json"
+        |br| * the default value is None
+    :type pathway: str
+
+    :param climate_experiment: the climate experiment on which to filter climate data. For example: "RCP2.6"
+        |br| * the default value is None
+    :type climate_experiment: str
 
     :param mini_version: indicates if a reduced number of fields on data should be returned
         |br| * the default value is True
@@ -180,19 +190,29 @@ def get_region_data(
     :returns: The result
     :rtype: list/pd.DataFrame
     """
-    # request
+    # base URL
     base_url = (
         f"http://data.localised-project.eu/dsp/v1/{country_code.lower()}/region_data/"
     )
+    # mini version
     if mini_version:
         base_url = f"{base_url}mini_version/"
 
-    if variable is None:
-        next_request_url = f"{base_url}?api_key={api_key}&region={region_code}"
-    else:
-        next_request_url = (
-            f"{base_url}?api_key={api_key}&region={region_code}&variable={variable}"
-        )
+    # default URL
+    next_request_url = f"{base_url}?api_key={api_key}&region={region_code}"
+
+    # optional filters
+    ## variable
+    if variable is not None:
+        next_request_url = f"{next_request_url}&variable={variable}"
+
+    ## pathway
+    if pathway is not None:
+        next_request_url = f"{next_request_url}&pathway={pathway}"
+
+    ## climate experiment
+    if climate_experiment is not None:
+        next_request_url = f"{next_request_url}&climate_experiment={climate_experiment}"
 
     result_collection = []
     while next_request_url is not None:
@@ -304,8 +324,10 @@ def get_variable_metadata(
 def get_variable_data(
     api_key: str,
     country_code: str,
-    variable: str,
     spatial_resolution: str,
+    variable: str,
+    pathway: Optional[str] = None,
+    climate_experiment: Optional[str] = None,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
     save_path: Optional[str] = os.path.dirname(__file__),
@@ -320,13 +342,21 @@ def get_variable_data(
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
 
-    :param variable: the required variable
-    :type variable: str
-
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
 
+    :param variable: the required variable
+    :type variable: str
+
     **Default arguments:**
+
+    :param pathway: the EUCalc pathway file name on which to filter data. For example: "pt-lts-bc-2050-05062022.json"
+        |br| * the default value is None
+    :type pathway: str
+
+    :param climate_experiment: the climate experiment on which to filter data. For example: "RCP2.6"
+        |br| * the default value is None
+    :type climate_experiment: str
 
     :param result_format: the format of the resulting data
         |br| * the default value is 'json'
@@ -350,7 +380,7 @@ def get_variable_data(
     :returns: The result
     :rtype: list/pd.DataFrame
     """
-    # request
+    # default URL
     next_request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
         "variable_data/?"
@@ -358,6 +388,15 @@ def get_variable_data(
         "resolution=" + spatial_resolution + "&"
         "variable=" + variable
     )
+
+    # optional filters
+    ## pathway
+    if pathway is not None:
+        next_request_url = f"{next_request_url}&pathway={pathway}"
+
+    ## climate experiment
+    if climate_experiment is not None:
+        next_request_url = f"{next_request_url}&climate_experiment={climate_experiment}"
 
     result_collection = []
     while next_request_url is not None:
