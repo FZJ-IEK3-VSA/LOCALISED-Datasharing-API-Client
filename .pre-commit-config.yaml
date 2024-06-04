@@ -12,3 +12,14 @@ repos:
         stages: [commit]
         language: system
         entry: jupyter nbconvert --ClearOutputPreprocessor.enabled=True --ClearMetadataPreprocessor.enabled=True --inplace
+
+# -   repo: local
+#     hooks:
+#     -   id: prospector
+#         name: prospector
+#         entry: prospector
+#         language: python 
+#         language_version: 3.10
+#         additional_dependicies: 
+#         additional_dependencies:
+#             - ".[with_everything]"
