@@ -109,9 +109,6 @@ def get_region_metadata(
 
         result_collection.extend(response_data)
 
-    if len(result_collection) == 1:
-        result_collection = result_collection[0]
-
     # save
     if save_result:
         if save_path is None:
