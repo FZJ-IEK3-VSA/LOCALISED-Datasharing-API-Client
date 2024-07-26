@@ -102,7 +102,10 @@ def get_region_metadata(
 
     result_collection = []
     while next_request_url is not None:
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]
@@ -127,7 +130,7 @@ def get_region_data(
     country_code: str,
     region_code: str,
     variable: Optional[str] = None,
-    pathway: Optional[str] = None,
+    pathway_description: Literal["national", "with_behavioural_changes"] = None,
     climate_experiment: Optional[str] = None,
     mini_version: Optional[bool] = True,
     result_format: Literal["json", "df"] = "json",
@@ -153,9 +156,9 @@ def get_region_data(
         |br| * the default value is None
     :type variable: str
 
-    :param pathway: the EUCalc pathway file name on which to filter EUCalc data. For example: "pt-lts-bc-2050-05062022.json"
+    :param pathway_description: the EUCalc pathway on which to filter data. Options: "national" or "with_behavioural_changes".
         |br| * the default value is None
-    :type pathway: str
+    :type pathway_description: str
 
     :param climate_experiment: the climate experiment on which to filter climate data. For example: "RCP2.6"
         |br| * the default value is None
@@ -204,17 +207,31 @@ def get_region_data(
         next_request_url = f"{next_request_url}&variable={variable}"
 
     ## pathway
-    if pathway is not None:
-        next_request_url = f"{next_request_url}&pathway={pathway}"
+    if pathway_description is not None:
+        if pathway_description not in ["national", "with_behavioural_changes"]:
+            raise ValueError(
+                "pathway_description should be one of national, with_behavioural_changes"
+            )
+
+        next_request_url = f"{next_request_url}&pathway={pathway_description}"
 
     ## climate experiment
     if climate_experiment is not None:
+        if climate_experiment not in ["RCP2.6", "RCP4.5", "RCP8.5", "Historical"]:
+            raise ValueError(
+                "climate_experiment should be one of RCP2.6, RCP4.5, RCP8.5, Historical"
+            )
+
         next_request_url = f"{next_request_url}&climate_experiment={climate_experiment}"
 
     result_collection = []
     while next_request_url is not None:
         print(next_request_url)
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]
@@ -223,10 +240,6 @@ def get_region_data(
             result_collection.extend(response_data)
         elif result_format == "df":
             result_collection.append(pd.json_normalize(response_data))
-        else:
-            raise ValueError(
-                "Unrecognised result_format. Available options: json and df"
-            )
 
     if result_format == "df":
         result_collection = pd.concat(result_collection)
@@ -255,10 +268,11 @@ def get_region_data(
 def get_variable_metadata(
     api_key: str,
     country_code: str,
-    variable: str,
+    variable: Optional[str] = None,
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "variable_metadata",
+    result_format: Literal["json", "df"] = "json",
 ) -> Any:
     """
     Return data for a specified variable at a specified resolution, for a specified country.
@@ -269,7 +283,101 @@ def get_variable_metadata(
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
 
-    :param variable: the required variable
+    **Default arguments:**
+
+    :param variable: the variable to filter on.
+        |br| * the default value is None
+    :type variable: str
+
+    :param save_result: indicates whether the result should be saved.
+        The result is saved as .json
+        |br| * the default value is False
+    :type save_result: bool
+
+    :param save_path: the folder path in which to save the result.
+        If None, the result is save in the same folder as this file- `client.py`
+        |br| * the default value is None
+    :type save_path: str
+
+    :param save_name: the file name of the result
+        |br| * the default value is 'variable_metadata'
+    :type save_path: str
+
+    :returns: The result
+    :rtype: Any
+    """
+    # request
+    next_request_url = (
+        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "variable_metadata/?"
+        "api_key=" + api_key
+    )
+
+    # optional filter - variable
+    if variable is not None:
+        next_request_url = f"{next_request_url}&variable={variable}"
+
+    result_collection = []
+    while next_request_url is not None:
+        print(next_request_url)
+        response = requests.get(next_request_url, stream=True, timeout=240)
+
+        response.raise_for_status()
+
+        response = response.json()
+
+        next_request_url = response["next"]
+        response_data = response["results"]
+
+        if result_format == "json":
+            result_collection.extend(response_data)
+        elif result_format == "df":
+            result_collection.append(pd.json_normalize(response_data))
+
+    if result_format == "df":
+        result_collection = pd.concat(result_collection)
+
+    # save
+    if save_result:
+        if save_path is None:
+            save_path = os.path.dirname(__file__)
+
+        if result_format == "json":
+            save_json(
+                data=result_collection,
+                save_path=save_path,
+                save_name=f"{save_name}.json",
+            )
+        else:
+            save_df(
+                data_df=result_collection,
+                save_path=save_path,
+                save_name=f"{save_name}.csv",
+            )
+
+    return result_collection
+
+
+def get_proxy_details(
+    api_key: str,
+    country_code: str,
+    variable,
+    save_result: Optional[bool] = False,
+    save_path: Optional[str] = None,
+    save_name: Optional[str] = "proxy_details",
+    result_format: Literal["json", "df"] = "json",
+) -> Any:
+    """
+    Return proxy details for a specified variable, for a specified country. Since there is a possibility to have different proxies
+    for different years (present and future data), information for each year is returned.
+
+    :param api_key: the secret api key
+    :type api_key: str
+
+    :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
+    :type country_code: str
+
+    :param variable: the variable to filter on.
     :type variable: str
 
     **Default arguments:**
@@ -294,25 +402,39 @@ def get_variable_metadata(
     # request
     request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
-        "variable_metadata/?"
+        "proxy_details/?"
         "api_key=" + api_key + "&"
         "variable=" + variable
     )
 
-    response = requests.get(request_url, stream=True, timeout=240).json()
+    response = requests.get(request_url, stream=True, timeout=240)
 
-    response_data = response["results"][0]
+    response.raise_for_status()
+
+    response = response.json()
+
+    response_data = response["results"]
+
+    if result_format == "df":
+        response_data = pd.json_normalize(response_data)
 
     # save
     if save_result:
         if save_path is None:
             save_path = os.path.dirname(__file__)
 
-        save_json(
-            data=response_data,
-            save_path=save_path,
-            save_name=f"{save_name}.json",
-        )
+        if result_format == "json":
+            save_json(
+                data=response_data,
+                save_path=save_path,
+                save_name=f"{save_name}.json",
+            )
+        else:
+            save_df(
+                data_df=response_data,
+                save_path=save_path,
+                save_name=f"{save_name}.csv",
+            )
 
     return response_data
 
@@ -323,7 +445,7 @@ def get_variable_data(
     country_code: str,
     spatial_resolution: str,
     variable: str,
-    pathway: Optional[str] = None,
+    pathway_description: Literal["national", "with_behavioural_changes"] = None,
     climate_experiment: Optional[str] = None,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
@@ -347,9 +469,9 @@ def get_variable_data(
 
     **Default arguments:**
 
-    :param pathway: the EUCalc pathway file name on which to filter data. For example: "pt-lts-bc-2050-05062022.json"
+    :param pathway_description: the EUCalc pathway on which to filter data. Options: "national" or "with_behavioural_changes".
         |br| * the default value is None
-    :type pathway: str
+    :type pathway_description: str
 
     :param climate_experiment: the climate experiment on which to filter data. For example: "RCP2.6"
         |br| * the default value is None
@@ -388,17 +510,31 @@ def get_variable_data(
 
     # optional filters
     ## pathway
-    if pathway is not None:
-        next_request_url = f"{next_request_url}&pathway={pathway}"
+    if pathway_description is not None:
+        if pathway_description not in ["national", "with_behavioural_changes"]:
+            raise ValueError(
+                "pathway_description should be one of national, with_behavioural_changes"
+            )
+
+        next_request_url = f"{next_request_url}&pathway={pathway_description}"
 
     ## climate experiment
     if climate_experiment is not None:
+        if climate_experiment not in ["RCP2.6", "RCP4.5", "RCP8.5", "Historical"]:
+            raise ValueError(
+                "climate_experiment should be one of RCP2.6, RCP4.5, RCP8.5, Historical"
+            )
+
         next_request_url = f"{next_request_url}&climate_experiment={climate_experiment}"
 
     result_collection = []
     while next_request_url is not None:
         print(next_request_url)
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]

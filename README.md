@@ -27,7 +27,7 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
     pip install -e.
     ```
 
-5. Run the example Jupyter notebooks -  `examples/all_regions_data_.ipynb` and `examples/single_region_data.ipynb`
+5. Run the example Jupyter notebooks -  `examples/single_variable_data.ipynb` and `examples/single_region_data.ipynb`
 
     **Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:**
 
@@ -41,9 +41,9 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 
     - `variable` --> If you wish to get data for a particular variable, provide the name here
 
-    - `pathway` --> If you wish to filter on a particular EUCalc decarbonisation pathway, provide a pathway file name here
+    - `pathway_description` --> If you wish to filter on a particular EUCalc decarbonisation pathway, provide the name here. Can be either "national" or "with_behavioural_changes"
 
-    - `climate_experiment` --> If you wish to filter on a particular climate experiment, provide the name here
+    - `climate_experiment` --> If you wish to filter on a particular climate experiment, provide the name here. Can be one of "RCP2.6", "RCP4.5", "RCP8.5", "Historical"
 
 
 
