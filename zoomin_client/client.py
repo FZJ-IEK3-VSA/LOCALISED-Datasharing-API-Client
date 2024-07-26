@@ -102,7 +102,10 @@ def get_region_metadata(
 
     result_collection = []
     while next_request_url is not None:
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]
@@ -214,7 +217,11 @@ def get_region_data(
     result_collection = []
     while next_request_url is not None:
         print(next_request_url)
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]
@@ -299,7 +306,11 @@ def get_variable_metadata(
         "variable=" + variable
     )
 
-    response = requests.get(request_url, stream=True, timeout=240).json()
+    response = requests.get(request_url, stream=True, timeout=240)
+
+    response.raise_for_status()
+
+    response = response.json()
 
     response_data = response["results"][0]
 
@@ -398,7 +409,11 @@ def get_variable_data(
     result_collection = []
     while next_request_url is not None:
         print(next_request_url)
-        response = requests.get(next_request_url, stream=True, timeout=240).json()
+        response = requests.get(next_request_url, stream=True, timeout=240)
+
+        response.raise_for_status()
+
+        response = response.json()
 
         next_request_url = response["next"]
         response_data = response["results"]
