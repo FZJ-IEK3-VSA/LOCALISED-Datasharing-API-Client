@@ -1,6 +1,5 @@
 import os
 import pytest
-import pandas as pd
 from zoomin_client import client
 
 
@@ -12,11 +11,10 @@ from zoomin_client import client
         ("DE600_02000000"),
     ],
 )
-def test_get_region_data(api_key, region_code):
+def test_get_region_data(region_code):
     """Check if region data is returned."""
     save_path = os.path.join(os.path.dirname(__file__))
     output_df = client.get_region_data(
-        api_key,
         country_code="de",
         region_code=region_code,
         result_format="df",
@@ -34,11 +32,11 @@ def test_get_region_data(api_key, region_code):
 
     # EUCalc
     for year in [2020, 2025, 2030, 2035, 2040, 2045, 2050]:
-        for pathway in ["de-lts-st-2050-05062023.json", "de-lts-bc-2050-05062023.json"]:
+        for pathway in ["national", "with_behavioural_changes"]:
             eucalc_df = output_df[
                 (output_df["var_name"].str.startswith("eucalc_"))
                 & (output_df["year"] == year)
-                & (output_df["pathway_file_name"] == pathway)
+                & (output_df["pathway_description"] == pathway)
             ].copy()
             assert len(eucalc_df) == 926
 
@@ -61,20 +59,19 @@ def test_get_region_data(api_key, region_code):
 @pytest.mark.parametrize(
     "climate_experiment,pathway",
     [
-        ("RCP4.5", "de-lts-bc-2050-05062023.json"),
-        ("RCP2.6", "de-lts-st-2050-05062023.json"),
-        ("RCP4.5", "de-lts-st-2050-05062023.json"),
+        ("RCP4.5", "national"),
+        ("RCP2.6", "national"),
+        ("RCP4.5", "with_behavioural_changes"),
     ],
 )
-def test_get_region_data_with_filter(api_key, climate_experiment, pathway):
+def test_get_region_data_with_filter(climate_experiment, pathway):
     """Check if filtered region data is returned."""
 
     output_df = client.get_region_data(
-        api_key,
-        country_code="de",
-        region_code="DE300",
+        country_code="mt",
+        region_code="MT001_MT01101",
         climate_experiment=climate_experiment,
-        pathway=pathway,
+        pathway_description=pathway,
         result_format="df",
     )
 
@@ -93,6 +90,6 @@ def test_get_region_data_with_filter(api_key, climate_experiment, pathway):
     eucalc_df = output_df[
         (output_df["var_name"].str.startswith("eucalc_"))
         & (output_df["year"] == 2030)
-        & (output_df["pathway_file_name"] == pathway)
+        & (output_df["pathway_description"] == pathway)
     ].copy()
     assert len(eucalc_df) == 926  # 926 variables
