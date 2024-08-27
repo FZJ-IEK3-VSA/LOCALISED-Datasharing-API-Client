@@ -7,7 +7,7 @@ def test_get_variable_metadata():
     """Check if variable metadata is returned."""
     output = client.get_variable_metadata(variable="population", country_code="de")
 
-    assert isinstance(output, dict)
+    assert isinstance(output, list)
 
 
 @pytest.mark.parametrize("result_format", ["json", "df"])

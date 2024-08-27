@@ -68,10 +68,10 @@ def test_get_region_data_with_filter(climate_experiment, pathway):
     """Check if filtered region data is returned."""
 
     output_df = client.get_region_data(
-        country_code="de",
-        region_code="DE300",
+        country_code="mt",
+        region_code="MT001_MT01101",
         climate_experiment=climate_experiment,
-        pathway=pathway,
+        pathway_description=pathway,
         result_format="df",
     )
 
