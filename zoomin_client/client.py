@@ -124,7 +124,7 @@ def get_region_data(
     country_code: str,
     region_code: str,
     variable: Optional[str] = None,
-    pathway_description: Literal["national", "with_behavioural_changes"] = None,
+    pathway_description: Optional[str] = None,
     climate_experiment: Optional[str] = None,
     mini_version: Optional[bool] = True,
     result_format: Literal["json", "df"] = "json",
@@ -346,15 +346,16 @@ def get_variable_metadata(
 
 def get_proxy_details(
     country_code: str,
-    variable,
+    variable: str,
     save_result: Optional[bool] = False,
     save_path: Optional[str] = None,
     save_name: Optional[str] = "proxy_details",
     result_format: Literal["json", "df"] = "json",
 ) -> Any:
     """
-    Return proxy details for a specified variable, for a specified country. Since there is a possibility to have different proxies
-    for different years (present and future data), information for each year is returned.
+    Return proxy details for a specified variable, for a specified country.
+
+    Since there is a possibility to have different proxies for different years (present and future data), information for each year is returned.
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -425,7 +426,7 @@ def get_variable_data(
     country_code: str,
     spatial_resolution: str,
     variable: str,
-    pathway_description: Literal["national", "with_behavioural_changes"] = None,
+    pathway_description: Optional[str] = None,
     climate_experiment: Optional[str] = None,
     result_format: Literal["json", "df"] = "json",
     save_result: Optional[bool] = False,
