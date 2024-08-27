@@ -29,8 +29,6 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 
     **Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:**
 
-    - `api_key` --> The secret API key. **Note:** Please use the key shared with you in confidence
-
     - `country_code` --> The country for which you wish to query the data. For example: "de", "es", "nl", etc
 
     - `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 

@@ -44,7 +44,6 @@ def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
 
 
 def get_region_metadata(
-    api_key: str,
     country_code: str,
     spatial_resolution: str,
     region_code: Optional[str] = None,
@@ -54,9 +53,6 @@ def get_region_metadata(
 ) -> Union[list, dict]:
     """
     Return list of regions of a specified country, at a specified spatial resolution.
-
-    :param api_key: the secret api key
-    :type api_key: str
 
     :param country_code: the code of the required country. NOTE: must be in lower case
     :type region_code: str
@@ -92,7 +88,6 @@ def get_region_metadata(
     next_request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
         "region_metadata/?"
-        "api_key=" + api_key + "&"
         "resolution=" + spatial_resolution
     )
     print(next_request_url)
@@ -126,7 +121,6 @@ def get_region_metadata(
 
 @measure_time
 def get_region_data(
-    api_key: str,
     country_code: str,
     region_code: str,
     variable: Optional[str] = None,
@@ -140,9 +134,6 @@ def get_region_data(
 ) -> Union[list, pd.DataFrame]:
     """
     Return all the data for a specified region of a specified country, at a specified spatial resolution.
-
-    :param api_key: the secret api key
-    :type api_key: str
 
     :param country_code: the code of the required country. NOTE: must be in lower case
     :type region_code: str
@@ -199,7 +190,7 @@ def get_region_data(
         base_url = f"{base_url}mini_version/"
 
     # default URL
-    next_request_url = f"{base_url}?api_key={api_key}&region={region_code}"
+    next_request_url = f"{base_url}?region={region_code}"
 
     # optional filters
     ## variable
@@ -266,7 +257,6 @@ def get_region_data(
 
 
 def get_variable_metadata(
-    api_key: str,
     country_code: str,
     variable: Optional[str] = None,
     save_result: Optional[bool] = False,
@@ -276,9 +266,6 @@ def get_variable_metadata(
 ) -> Any:
     """
     Return data for a specified variable at a specified resolution, for a specified country.
-
-    :param api_key: the secret api key
-    :type api_key: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -309,13 +296,12 @@ def get_variable_metadata(
     # request
     next_request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
-        "variable_metadata/?"
-        "api_key=" + api_key
+        "variable_metadata/"
     )
 
     # optional filter - variable
     if variable is not None:
-        next_request_url = f"{next_request_url}&variable={variable}"
+        next_request_url = f"{next_request_url}?variable={variable}"
 
     result_collection = []
     while next_request_url is not None:
@@ -359,7 +345,6 @@ def get_variable_metadata(
 
 
 def get_proxy_details(
-    api_key: str,
     country_code: str,
     variable,
     save_result: Optional[bool] = False,
@@ -370,9 +355,6 @@ def get_proxy_details(
     """
     Return proxy details for a specified variable, for a specified country. Since there is a possibility to have different proxies
     for different years (present and future data), information for each year is returned.
-
-    :param api_key: the secret api key
-    :type api_key: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -403,7 +385,6 @@ def get_proxy_details(
     request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
         "proxy_details/?"
-        "api_key=" + api_key + "&"
         "variable=" + variable
     )
 
@@ -441,7 +422,6 @@ def get_proxy_details(
 
 @measure_time
 def get_variable_data(
-    api_key: str,
     country_code: str,
     spatial_resolution: str,
     variable: str,
@@ -454,9 +434,6 @@ def get_variable_data(
 ) -> Union[list, pd.DataFrame]:
     """
     Return data for a specified variable at LAU level.
-
-    :param api_key: the secret api key
-    :type api_key: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -503,7 +480,6 @@ def get_variable_data(
     next_request_url = (
         "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
         "variable_data/?"
-        "api_key=" + api_key + "&"
         "resolution=" + spatial_resolution + "&"
         "variable=" + variable
     )

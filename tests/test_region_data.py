@@ -12,11 +12,10 @@ from zoomin_client import client
         ("DE600_02000000"),
     ],
 )
-def test_get_region_data(api_key, region_code):
+def test_get_region_data(region_code):
     """Check if region data is returned."""
     save_path = os.path.join(os.path.dirname(__file__))
     output_df = client.get_region_data(
-        api_key,
         country_code="de",
         region_code=region_code,
         result_format="df",
@@ -66,11 +65,10 @@ def test_get_region_data(api_key, region_code):
         ("RCP4.5", "de-lts-st-2050-05062023.json"),
     ],
 )
-def test_get_region_data_with_filter(api_key, climate_experiment, pathway):
+def test_get_region_data_with_filter(climate_experiment, pathway):
     """Check if filtered region data is returned."""
 
     output_df = client.get_region_data(
-        api_key,
         country_code="de",
         region_code="DE300",
         climate_experiment=climate_experiment,
