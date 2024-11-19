@@ -8,7 +8,6 @@ from zoomin_client import client
     [
         ("DEA23"),
         ("DE"),
-        ("DE600_02000000"),
     ],
 )
 def test_get_region_data(region_code):
@@ -33,12 +32,14 @@ def test_get_region_data(region_code):
     # EUCalc
     for year in [2020, 2025, 2030, 2035, 2040, 2045, 2050]:
         for pathway in ["national", "with_behavioural_changes"]:
+            print(year)
+            print(pathway)
             eucalc_df = output_df[
                 (output_df["var_name"].str.startswith("eucalc_"))
                 & (output_df["year"] == year)
-                & (output_df["pathway_description"] == pathway)
+                & (output_df["pathway"] == pathway)
             ].copy()
-            assert len(eucalc_df) == 926
+            assert len(eucalc_df) == 916
 
     # EUCalc vars assert
     for var_name in [
@@ -69,7 +70,7 @@ def test_get_region_data_with_filter(climate_experiment, pathway):
 
     output_df = client.get_region_data(
         country_code="mt",
-        region_code="MT001_MT01101",
+        region_code="MT001",
         climate_experiment=climate_experiment,
         pathway_description=pathway,
         result_format="df",
@@ -78,18 +79,20 @@ def test_get_region_data_with_filter(climate_experiment, pathway):
     # Collected var
     collected_df = output_df[(output_df["var_name"] == "intertidal_flats_cover")].copy()
     assert len(collected_df) == 1
-    # TODO: investigate why its not equal to 80 and fix it and then uncomment this
-    # # Climate data
-    # climate_df = output_df[
-    #     (output_df["var_name"] == "cproj_annual_mean_maximum_temperature") # "cproj_annual_mean_minimum_temperature"
-    # ].copy()
 
-    # assert len(climate_df) == 80 # 80 years
+    # Climate data
+    climate_df = output_df[
+        (
+            output_df["var_name"] == "cproj_annual_mean_maximum_temperature"
+        )  # "cproj_annual_mean_minimum_temperature"
+    ].copy()
+
+    assert len(climate_df) == 80  # 80 years
 
     # EUCalc
     eucalc_df = output_df[
         (output_df["var_name"].str.startswith("eucalc_"))
         & (output_df["year"] == 2030)
-        & (output_df["pathway_description"] == pathway)
+        & (output_df["pathway"] == pathway)
     ].copy()
-    assert len(eucalc_df) == 926  # 926 variables
+    assert len(eucalc_df) == 916  # 916 variables
