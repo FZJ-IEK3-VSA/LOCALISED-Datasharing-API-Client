@@ -6,6 +6,7 @@ dependencies:
 - conda-forge::jupyter
 - conda-forge::notebook
 - conda-forge::black=22.3.0
+- openpyxl
 - pip:
   - prospector[with_everything]==1.10.3
   - python-dotenv
