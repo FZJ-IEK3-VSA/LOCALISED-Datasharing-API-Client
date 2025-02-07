@@ -10,8 +10,6 @@ dependencies:
   - notebook
   - black=22.3.0
   - openpyxl
-  - xlwings
   - prospector=1.7.7
   - python-dotenv
   - pytest-dotenv
-  - xlwings

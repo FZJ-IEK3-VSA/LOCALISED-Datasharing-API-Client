@@ -2,7 +2,7 @@ import os
 import re
 import shutil
 import time
-import xlwings as xw
+from openpyxl import load_workbook
 import pandas as pd
 from zoomin_client import client
 
@@ -196,16 +196,15 @@ start = time.time()
 
 # Define file paths
 original_file_path = os.path.join(
-    "..", "data", "input", "CoM-Europe_reporting_template_2023_final_with_tags.xlsx"
+    "..", "data", "input", "CoM-Europe_reporting_template_2023_v1.xlsx"
 )
-output_file_path = os.path.join("..", "data", "output", f"CoM_{region_code}.xlsx")
+output_file_path = os.path.join("..", "data", "output", f"CoM_{region_code}_1.xlsx")
 
 # Make a copy of the original file (otherwise it overwrites the original one!)
 shutil.copy(original_file_path, output_file_path)
 
 # Open the copied file
-app = xw.App(visible=False)  # Run Excel in the background
-workbook = app.books.open(output_file_path)
+workbook = load_workbook(output_file_path)
 
 # fill sheets
 for sheet_name in [
@@ -214,30 +213,28 @@ for sheet_name in [
     "Energy poverty assessment",
 ]:
 
-    sheet = workbook.sheets[sheet_name]
+    sheet = workbook[sheet_name]
 
     # Get used range
-    used_range = sheet.used_range
-    last_column = used_range.last_cell.column
-
     # Ensure we only loop up to column Z (26)
     # NOTE: although the unused columns were hidden, it still looped through all of them!
     # So it is being stopped at Z here which is more columns than currently used.
     # If this changes in the future templates, this needs to be changed.
-    max_column = min(last_column, 26)
+    max_row = sheet.max_row
+    max_column = min(sheet.max_column, 26)  # Limit to column Z (26)
 
-    for row in sheet.range((1, 1), (used_range.last_cell.row, max_column)):
+    for row in sheet.iter_rows(
+        min_row=1, max_row=max_row, min_col=1, max_col=max_column
+    ):
         for cell in row:
             if cell.value in soi_value_dict.keys():
-                soi_value = soi_value_dict[cell.value]
-
-                cell.value = soi_value
+                cell.value = soi_value_dict[cell.value]
 
     print(f"Finished filling {sheet_name}")
 
-# Close Excel
+# Save and close the workbook
+workbook.save(output_file_path)
 workbook.close()
-app.quit()
 
 end = time.time()
 
