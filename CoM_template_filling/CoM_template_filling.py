@@ -10,28 +10,16 @@ from zoomin_client import client
 # Importing data and SOI metadata
 # =============================================================
 
-# Get SOI calculation excel sheet and
-# filter on the variables that can actually be filled using DSP data
+# Get SOI calculation excel sheet
 soi_metadata_df = pd.read_excel(
     os.path.join(
         "..",
-        "..",
-        "ETHOS.RegionData",
         "data",
         "input",
-        "01_raw",
         "variables_with_details_and_tags.xlsx",
     ),
     sheet_name="admin_business_and_social_KPIs",
 )
-
-soi_vars_with_dsp_input = soi_metadata_df[
-    (~soi_metadata_df["soi_name"].isna())
-    & (~soi_metadata_df["calculation"].isin(["BLANK", "TBD"]))
-    & (  # some SOIs are decided to be left blank or TBD yet
-        soi_metadata_df["data_source"] != "TOTAL"
-    )  # some SOIs are sum of other SOIs, the CoM template fills these automatically
-][["soi_name", "calculation"]]
 
 # get DSP data for a region
 region_code = "DEA23"
@@ -58,6 +46,7 @@ region_data["var_name"] = region_data["var_name"].replace(
         "final_energy_consumption_from_manufacture_of_chemical_and_chemical_products_using_sub_bituminous_coal": "final_energy_consumption_from_manufacture_of_chemicals_using_sub_bituminous_coal",
         "final_energy_consumption_from_manufacture_of_chemical_and_chemical_products_using_solar_thermal": "final_energy_consumption_from_manufacture_of_chemicals_using_solar_thermal",
         "final_energy_consumption_from_manufacture_of_chemical_and_chemical_products_using_geothermal": "final_energy_consumption_from_manufacture_of_chemicals_using_geothermal",
+        "energy_demand_in_transport_from_belended_biogasoline": "energy_demand_in_transport_from_blended_biogasoline",
     }
 )
 
@@ -105,11 +94,63 @@ def extract_variables(equation):
     return [var.strip() for var in matches if not var.strip().isdigit()]
 
 
+def get_dsp_value(variable):
+    if variable.startswith("eucalc_"):
+        sub_region_data = region_data[
+            (region_data["var_name"] == variable) & (region_data["year"] == 2020)
+        ]  # 2020 value is taken
+
+        dsp_value = sub_region_data["value"].item()
+
+    elif variable.startswith("cproj_"):
+        sub_region_data = region_data[
+            (region_data["var_name"] == variable)
+            & (region_data["year"] == 2020)
+            & (region_data["climate_experiment"] == "RCP4.5")  # 2020 value is taken
+        ]  #  RCP4.5 scenario is considered
+
+        dsp_value = sub_region_data["value"].item()
+
+    elif variable.startswith("cimp_"):
+        sub_region_data = region_data[
+            (region_data["var_name"] == variable)
+            & (region_data["climate_experiment"].isin(("RCP4.5", "Historical")))
+        ]  # Historical or RCP4.5 value is taken
+        # for climate impact data
+
+        if ("historical_probability" in variable) or ("impact" in variable):
+            int_value = int(sub_region_data["value"].item())
+            dsp_value = probability_impact_string_mapping[int_value]
+
+        elif ("change_in_frequency" in variable) or ("change_in_intensity" in variable):
+            int_value = int(sub_region_data["value"].item())
+            dsp_value = intensity_frequency_string_mapping[int_value]
+
+        elif "time_frame" in variable:
+            int_value = int(sub_region_data["value"].item())
+            dsp_value = timeframe_string_mapping[int_value]
+
+    else:
+        sub_region_data = region_data[region_data["var_name"] == variable]
+        dsp_value = sub_region_data["value"].item()
+
+    return dsp_value
+
+
 soi_value_dict = {}
+
+# SOI calculations using collected and EUCalc data
+soi_vars_with_dsp_input = soi_metadata_df[
+    (~soi_metadata_df["var_name"].isna())
+    & (~soi_metadata_df["calculation"].isin(["BLANK", "TBD"]))
+    & (  # some SOIs are decided to be left blank or TBD yet
+        soi_metadata_df["data_source"] != "TOTAL"
+    )  # some SOIs are sum of other SOIs
+][["var_name", "calculation"]]
 
 for idx, row in soi_vars_with_dsp_input.iterrows():
 
-    soi_name = row["soi_name"]
+    soi_name = row["var_name"]
     equation = row["calculation"]
 
     equation = equation.replace("\n", " ")
@@ -120,15 +161,7 @@ for idx, row in soi_vars_with_dsp_input.iterrows():
             input_vars = extract_variables(equation)
 
             for input_var in input_vars:
-                if input_var.startswith("eucalc_"):
-                    sub_region_data = region_data[
-                        (region_data["var_name"] == input_var)
-                        & (region_data["year"] == 2020)
-                    ]  # EUCalc 2020 value is taken
-                else:
-                    sub_region_data = region_data[region_data["var_name"] == input_var]
-
-                value = sub_region_data["value"].item()
+                value = get_dsp_value(input_var)
 
                 equation = equation.replace(input_var, str(value))
 
@@ -138,55 +171,43 @@ for idx, row in soi_vars_with_dsp_input.iterrows():
 
         # cases when its directly a variable from DSP
         else:
-            if equation.startswith("eucalc_"):
-                sub_region_data = region_data[
-                    (region_data["var_name"] == equation)
-                    & (region_data["year"] == 2020)
-                ]  # 2020 value is taken
-
-                value = sub_region_data["value"].item()
-
-            elif equation.startswith("cproj_"):
-                sub_region_data = region_data[
-                    (region_data["var_name"] == equation)
-                    & (region_data["year"] == 2020)
-                    & (  # 2020 value is taken
-                        region_data["climate_experiment"] == "RCP4.5"
-                    )
-                ]  #  RCP4.5 scenario is considered
-
-                value = sub_region_data["value"].item()
-
-            elif equation.startswith("cimp_"):
-                sub_region_data = region_data[
-                    (region_data["var_name"] == equation)
-                    & (region_data["climate_experiment"].isin(("RCP4.5", "Historical")))
-                ]  # Historical or RCP4.5 value is taken
-                # for climate impact data
-
-                if ("historical_probability" in equation) or ("impact" in equation):
-                    int_value = int(sub_region_data["value"].item())
-                    value = probability_impact_string_mapping[int_value]
-
-                elif ("change_in_frequency" in equation) or (
-                    "change_in_intensity" in equation
-                ):
-                    int_value = int(sub_region_data["value"].item())
-                    value = intensity_frequency_string_mapping[int_value]
-
-                elif "time_frame" in equation:
-                    int_value = int(sub_region_data["value"].item())
-                    value = timeframe_string_mapping[int_value]
-
-            else:
-                sub_region_data = region_data[region_data["var_name"] == equation]
-                value = sub_region_data["value"].item()
-
-            soi_value_dict[soi_name] = value
+            dsp_value = get_dsp_value(equation)
+            soi_value_dict[soi_name] = dsp_value
 
     # some of the ratio calculations have 0/(0+0). This should result in 0
     except ZeroDivisionError:
         soi_value_dict[soi_name] = 0
+
+
+# SOI calculations using other SOIs - Totals
+soi_vars_with_totals = soi_metadata_df[soi_metadata_df["data_source"] == "TOTAL"][
+    ["var_name", "calculation"]
+]
+
+for idx, row in soi_vars_with_totals.iterrows():
+
+    soi_name = row["var_name"]
+    equation = row["calculation"]
+
+    equation = equation.replace("\n", " ")
+
+    input_vars = extract_variables(equation)
+
+    for input_var in input_vars:
+
+        value = soi_value_dict[input_var]
+
+        equation = equation.replace(input_var, str(value))
+
+    value = eval(equation)
+    soi_value_dict[soi_name] = value
+
+# save calculated SOIs as excel
+soi_calc_df = pd.DataFrame(list(soi_value_dict.items()), columns=["var_name", "value"])
+
+soi_calc_df.to_excel(
+    os.path.join("..", "data", "output", f"SOIs_{region_code}.xlsx"), index=False
+)
 
 # =============================================================
 # Filling CoM template
@@ -196,9 +217,9 @@ start = time.time()
 
 # Define file paths
 original_file_path = os.path.join(
-    "..", "data", "input", "CoM-Europe_reporting_template_2023_v1.xlsx"
+    "..", "data", "input", "CoM-Europe_reporting_template_2023_v3.xlsx"
 )
-output_file_path = os.path.join("..", "data", "output", f"CoM_{region_code}_1.xlsx")
+output_file_path = os.path.join("..", "data", "output", f"CoM_{region_code}.xlsx")
 
 # Make a copy of the original file (otherwise it overwrites the original one!)
 shutil.copy(original_file_path, output_file_path)
@@ -229,6 +250,10 @@ for sheet_name in [
         for cell in row:
             if cell.value in soi_value_dict.keys():
                 cell.value = soi_value_dict[cell.value]
+
+            elif cell.value in region_data["var_name"].values:
+                dsp_value = get_dsp_value(cell.value)
+                cell.value = dsp_value
 
     print(f"Finished filling {sheet_name}")
 
