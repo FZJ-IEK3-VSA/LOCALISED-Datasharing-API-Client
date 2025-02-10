@@ -18,7 +18,7 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
 2. Installing dependencies in a clean conda environment:
     ```bash
     cd LOCALISED-Datasharing-API-Client
-    mamba env create -n dsp_client -f requirements.yml 
+    mamba env create -f requirements.yml 
     conda activate dsp_client
     ```
 
