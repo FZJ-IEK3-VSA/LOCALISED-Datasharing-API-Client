@@ -14,6 +14,8 @@ from openpyxl import load_workbook
 import pandas as pd
 import logging
 
+from zoomin_client import client
+
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -32,6 +34,7 @@ def get_region_data(region_code, pathway_description="national", result_format="
     Get region data from the DSP
     """
     region_data = client.get_region_data(
+        version="v1",
         country_code=region_code[:2].lower(),
         region_code=region_code,
         pathway_description=pathway_description,
