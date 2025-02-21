@@ -24,6 +24,7 @@ soi_metadata_df = pd.read_excel(
 # get DSP data for a region
 region_code = "DEA23"
 region_data = client.get_region_data(
+    version="v1",
     country_code="de",
     region_code=region_code,
     pathway_description="national",  # National pathway is considered for SOIs
