@@ -44,6 +44,7 @@ def save_df(data_df: pd.DataFrame, save_path: str, save_name: str) -> None:
 
 
 def get_region_metadata(
+    version: str,
     country_code: str,
     spatial_resolution: str,
     region_code: Optional[str] = None,
@@ -54,8 +55,11 @@ def get_region_metadata(
     """
     Return list of regions of a specified country, at a specified spatial resolution.
 
+    :param version: the version of the DSP to query. E.g. v1, v2, etc.
+    :type version: str
+
     :param country_code: the code of the required country. NOTE: must be in lower case
-    :type region_code: str
+    :type country_code: str
 
     :param spatial_resolution: the required spatial resolution
     :type spatial_resolution: str, one of {'NUTS0', 'NUTS1', 'NUTS2', 'NUTS3', 'LAU'}
@@ -86,7 +90,11 @@ def get_region_metadata(
     """
     # request
     next_request_url = (
-        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "http://data.localised-project.eu/dsp/"
+        + version
+        + "/"
+        + country_code.lower()
+        + "/"
         "region_metadata/?"
         "resolution=" + spatial_resolution
     )
@@ -121,6 +129,7 @@ def get_region_metadata(
 
 @measure_time
 def get_region_data(
+    version: str,
     country_code: str,
     region_code: str,
     variable: Optional[str] = None,
@@ -135,8 +144,11 @@ def get_region_data(
     """
     Return all the data for a specified region of a specified country, at a specified spatial resolution.
 
+    :param version: the version of the DSP to query. E.g. v1, v2, etc.
+    :type version: str
+
     :param country_code: the code of the required country. NOTE: must be in lower case
-    :type region_code: str
+    :type country_code: str
 
     :param region_code: the code of the region to filter on
     :type region_code: str
@@ -183,8 +195,13 @@ def get_region_data(
     """
     # base URL
     base_url = (
-        f"http://data.localised-project.eu/dsp/v1/{country_code.lower()}/region_data/"
+        "http://data.localised-project.eu/dsp/"
+        + version
+        + "/"
+        + country_code.lower()
+        + "/region_data/"
     )
+
     # mini version
     if mini_version:
         base_url = f"{base_url}mini_version/"
@@ -257,6 +274,7 @@ def get_region_data(
 
 
 def get_variable_metadata(
+    version: str,
     country_code: str,
     variable: Optional[str] = None,
     save_result: Optional[bool] = False,
@@ -266,6 +284,9 @@ def get_variable_metadata(
 ) -> Any:
     """
     Return data for a specified variable at a specified resolution, for a specified country.
+
+    :param version: the version of the DSP to query. E.g. v1, v2, etc.
+    :type version: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -295,7 +316,11 @@ def get_variable_metadata(
     """
     # request
     next_request_url = (
-        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "http://data.localised-project.eu/dsp/"
+        + version
+        + "/"
+        + country_code.lower()
+        + "/"
         "variable_metadata/"
     )
 
@@ -345,6 +370,7 @@ def get_variable_metadata(
 
 
 def get_proxy_details(
+    version: str,
     country_code: str,
     variable: str,
     save_result: Optional[bool] = False,
@@ -356,6 +382,9 @@ def get_proxy_details(
     Return proxy details for a specified variable, for a specified country.
 
     Since there is a possibility to have different proxies for different years (present and future data), information for each year is returned.
+
+    :param version: the version of the DSP to query. E.g. v1, v2, etc.
+    :type version: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -384,7 +413,11 @@ def get_proxy_details(
     """
     # request
     request_url = (
-        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "http://data.localised-project.eu/dsp/"
+        + version
+        + "/"
+        + country_code.lower()
+        + "/"
         "proxy_details/?"
         "variable=" + variable
     )
@@ -423,6 +456,7 @@ def get_proxy_details(
 
 @measure_time
 def get_variable_data(
+    version: str,
     country_code: str,
     spatial_resolution: str,
     variable: str,
@@ -435,6 +469,9 @@ def get_variable_data(
 ) -> Union[list, pd.DataFrame]:
     """
     Return data for a specified variable at LAU level.
+
+    :param version: the version of the DSP to query. E.g. v1, v2, etc.
+    :type version: str
 
     :param country_code: the code of the country for which data should be returned. NOTE: must be in lower case
     :type country_code: str
@@ -479,7 +516,11 @@ def get_variable_data(
     """
     # default URL
     next_request_url = (
-        "http://data.localised-project.eu/dsp/v1/" + country_code.lower() + "/"
+        "http://data.localised-project.eu/dsp/"
+        + version
+        + "/"
+        + country_code.lower()
+        + "/"
         "variable_data/?"
         "resolution=" + spatial_resolution + "&"
         "variable=" + variable
