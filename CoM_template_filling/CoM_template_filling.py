@@ -14,8 +14,6 @@ from openpyxl import load_workbook
 import pandas as pd
 import logging
 
-from zoomin_client import client 
-
 
 # Configure logger
 logger = logging.getLogger(__name__)
