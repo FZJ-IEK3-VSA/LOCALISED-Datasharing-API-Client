@@ -3,96 +3,83 @@ import pytest
 from zoomin_client import client
 
 
-@pytest.mark.parametrize(
-    "region_code",
-    [
-        ("DEA23"),
-        ("DE"),
-    ],
-)
-def test_get_region_data(region_code):
+def test_get_region_data():
     """Check if region data is returned."""
-    save_path = os.path.join(os.path.dirname(__file__))
-    output_df = client.get_region_data(
-        country_code="de",
-        region_code=region_code,
+    lau_output = client.get_region_data(
+        version="v4",
+        country_code="lv",
+        region_code="LV007_0661000",
         result_format="df",
-        save_result=True,
-        save_path=save_path,
+        mini_version=True,
     )
 
-    # Climate Projection  #TODO
-
-    # Collected var
-    collected_df = output_df[
-        (output_df["var_name"] == "relative_gross_value_added_nace_sector_l")
-    ].copy()
-    assert len(collected_df) == 1
-
-    # EUCalc
-    for year in [2020, 2025, 2030, 2035, 2040, 2045, 2050]:
-        for pathway in ["national", "with_behavioural_changes"]:
-            print(year)
-            print(pathway)
-            eucalc_df = output_df[
-                (output_df["var_name"].str.startswith("eucalc_"))
-                & (output_df["year"] == year)
-                & (output_df["pathway"] == pathway)
-            ].copy()
-            assert len(eucalc_df) == 916
-
-    # EUCalc vars assert
-    for var_name in [
-        "eucalc_elc_capex_nuclear",
-        "eucalc_elc_capex_res_solar_pv_utility",
-        "eucalc_bld_capex_reno_off_other",
-        "eucalc_elc_capex_res_other_hydroelectric",
-    ]:
-        eucalc_df = output_df[(output_df["var_name"] == var_name)].copy()
-        assert len(eucalc_df) == 14
-
-    # assert save
-    file_name = os.path.join(save_path, "region_data.csv")
-    assert os.path.exists(file_name)
-    os.remove(file_name)
-
-
-@pytest.mark.parametrize(
-    "climate_experiment,pathway",
-    [
-        ("RCP4.5", "national"),
-        ("RCP2.6", "national"),
-        ("RCP4.5", "with_behavioural_changes"),
-    ],
-)
-def test_get_region_data_with_filter(climate_experiment, pathway):
-    """Check if filtered region data is returned."""
-
-    output_df = client.get_region_data(
-        country_code="mt",
-        region_code="MT001",
-        climate_experiment=climate_experiment,
-        pathway_description=pathway,
+    nuts3_output = client.get_region_data(
+        version="v4",
+        country_code="lv",
+        region_code="LV007",
         result_format="df",
+        mini_version=True,
     )
 
+    nuts2_output = client.get_region_data(
+        version="v4",
+        country_code="lv",
+        region_code="LV00",
+        result_format="df",
+        mini_version=True,
+    )
+
+    nuts0_output = client.get_region_data(
+        version="v4",
+        country_code="lv",
+        region_code="LV",
+        result_format="df",
+        mini_version=True,
+    )
+
+    # check if output is present
+    assert len(lau_output) > 0
+    assert len(nuts3_output) > 0
+    assert len(nuts2_output) > 0
+    assert len(nuts0_output) > 0
+
+    # check if the number of variables are the same at all levels
+    lau_n_vars = len(lau_output["var_name"].unique())
+    nuts3_n_vars = len(nuts3_output["var_name"].unique())
+    nuts2_n_vars = len(nuts2_output["var_name"].unique())
+    nuts0_n_vars = len(nuts0_output["var_name"].unique())
+
+    assert lau_n_vars == nuts3_n_vars == nuts2_n_vars == nuts0_n_vars
+
+    # Climate Projection
+    cproj_var = nuts3_output[
+        nuts3_output["var_name"]
+        == "cproj_annual_maximum_temperature_cooling_degree_days"
+    ]
+    assert len(cproj_var) == 9 * 3  # year * RCPs
+
+    # Climate impact, non time series
+    cimp_non_ts_var = nuts3_output[
+        nuts3_output["var_name"] == "cimp_historical_probability_of_heatwaves_mean"
+    ]
+    assert (
+        len(cimp_non_ts_var) == 1
+    )  # year (["2020", "2025", "2030", "2035", "2040", "2045", "2050", "2075", "2099"]) * RCPs
+
+    # Climate impact, time series
+    cimp_ts_var = nuts3_output[
+        nuts3_output["var_name"] == "cimp_ts_heatwaves_intensity_mean"
+    ]
+    assert (
+        len(cimp_ts_var) == 8 * 3
+    )  # year ("2025", "2030", "2035", "2040", "2045", "2050", "2075", "2100",) * RCPs
+
     # Collected var
-    collected_df = output_df[(output_df["var_name"] == "intertidal_flats_cover")].copy()
-    assert len(collected_df) == 1
+    coll_var = nuts3_output[nuts3_output["var_name"] == "population"]
+    assert len(coll_var) == 1
 
-    # Climate data
-    climate_df = output_df[
-        (
-            output_df["var_name"] == "cproj_annual_mean_maximum_temperature"
-        )  # "cproj_annual_mean_minimum_temperature"
-    ].copy()
-
-    assert len(climate_df) == 80  # 80 years
-
-    # EUCalc
-    eucalc_df = output_df[
-        (output_df["var_name"].str.startswith("eucalc_"))
-        & (output_df["year"] == 2030)
-        & (output_df["pathway"] == pathway)
-    ].copy()
-    assert len(eucalc_df) == 916  # 916 variables
+    # Collected var
+    eucalc_var = nuts3_output[
+        nuts3_output["var_name"] == "eucalc_agr_emissions_n2o_crop_fertilizer"
+    ]
+    assert len(eucalc_var) == 7 * 2  # years * pathways
