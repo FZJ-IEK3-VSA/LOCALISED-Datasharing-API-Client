@@ -231,8 +231,10 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                 if "None" in equation:
                     soi_value = None
                 else:
-                    value = eval(equation)
-                    soi_value = value
+                    soi_value = eval(equation)
+
+                    if soi_var_name.startswith("number_of"):
+                        soi_value = round(soi_value)
 
             # cases when its directly a variable from DSP
             else:
