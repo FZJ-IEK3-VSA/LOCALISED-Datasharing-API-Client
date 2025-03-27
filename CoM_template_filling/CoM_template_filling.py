@@ -34,7 +34,7 @@ def get_region_data(region_code, pathway_description="national", result_format="
     Get region data from the DSP
     """
     region_data = client.get_region_data(
-        version="v3",
+        version="v4",
         country_code=region_code[:2].lower(),
         region_code=region_code,
         pathway_description=pathway_description,
@@ -98,7 +98,7 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
 
             if len(sub_region_data) == 0:
                 logger.warning(f"No data found for variable {variable}")
-                return 0
+                return None
 
             dsp_value = sub_region_data["value"].iloc[0]
 
@@ -113,7 +113,7 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
 
             if len(sub_region_data) == 0:
                 logger.warning(f"No data found for variable {variable}")
-                return 0
+                return None
 
             dsp_value = sub_region_data["value"].iloc[0]
 
@@ -126,7 +126,7 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
 
             if len(sub_region_data) == 0:
                 logger.warning(f"No data found for variable {variable}")
-                return 0
+                return None
 
             if ("historical_probability" in variable) or ("impact" in variable):
                 int_value = int(sub_region_data["value"].iloc[0])
@@ -146,7 +146,7 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
             sub_region_data = region_data[region_data["var_name"] == variable]
             if len(sub_region_data) == 0:
                 logger.warning(f"No data found for variable {variable}")
-                return 0
+                return None
 
             dsp_value = sub_region_data["value"].iloc[0]
 
@@ -161,7 +161,18 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     """
     Calculate SOIs for a region.
     """
-    soi_value_dict = {}
+    soi_df = pd.DataFrame(
+        columns=[
+            "soi_name",
+            "var_name",
+            "soi_description",
+            "methodology",
+            "SECAP_link",
+            "SDG_targets",
+            "var_unit",
+            "value",
+        ]
+    )
 
     # Get SOI calculation excel sheet
     soi_metadata_df = pd.read_excel(
@@ -181,11 +192,27 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         & (  # some SOIs are decided to be left blank or TBD yet
             soi_metadata_df["data_source"] != "TOTAL"
         )  # some SOIs are sum of other SOIs
-    ][["var_name", "calculation"]]
+    ][
+        [
+            "soi_name",
+            "var_name",
+            "soi_description",
+            "methodology",
+            "SECAP_link",
+            "SDG_targets",
+            "var_unit",
+            "calculation",
+        ]
+    ]
 
     for idx, row in soi_vars_with_dsp_input.iterrows():
-
-        soi_name = row["var_name"]
+        soi_name = row["soi_name"]
+        soi_var_name = row["var_name"]
+        soi_var_description = row["soi_description"]
+        methodology = row["methodology"]
+        SECAP_link = row["SECAP_link"]
+        SDG_targets = row["SDG_targets"]
+        var_unit = row["var_unit"]
         equation = row["calculation"]
 
         equation = equation.replace("\n", " ")
@@ -201,26 +228,55 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                     equation = equation.replace(input_var, str(value))
 
                 # Evaluate the equation and append calculated value to the SOI dict
-                value = eval(equation)
-                soi_value_dict[soi_name] = value
+                if "None" in equation:
+                    soi_value = None
+                else:
+                    value = eval(equation)
+                    soi_value = value
 
             # cases when its directly a variable from DSP
             else:
                 dsp_value = get_dsp_value(equation, region_data)
-                soi_value_dict[soi_name] = dsp_value
+                soi_value = dsp_value
 
         # some of the ratio calculations have 0/(0+0). This should result in 0
         except ZeroDivisionError:
-            soi_value_dict[soi_name] = 0
+            soi_value = 0
+
+        soi_df.loc[len(soi_df)] = {
+            "soi_name": soi_name,
+            "var_name": soi_var_name,
+            "soi_description": soi_var_description,
+            "methodology": methodology,
+            "SECAP_link": SECAP_link,
+            "SDG_targets": SDG_targets,
+            "var_unit": var_unit,
+            "value": soi_value,
+        }
 
     # SOI calculations using other SOIs - Totals
     soi_vars_with_totals = soi_metadata_df[soi_metadata_df["data_source"] == "TOTAL"][
-        ["var_name", "calculation"]
+        [
+            "soi_name",
+            "var_name",
+            "soi_description",
+            "methodology",
+            "SECAP_link",
+            "SDG_targets",
+            "var_unit",
+            "calculation",
+        ]
     ]
 
     for idx, row in soi_vars_with_totals.iterrows():
 
-        soi_name = row["var_name"]
+        soi_name = row["soi_name"]
+        soi_var_name = row["var_name"]
+        soi_var_description = row["soi_description"]
+        methodology = row["methodology"]
+        SECAP_link = row["SECAP_link"]
+        SDG_targets = row["SDG_targets"]
+        var_unit = row["var_unit"]
         equation = row["calculation"]
 
         equation = equation.replace("\n", " ")
@@ -228,27 +284,33 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         input_vars = extract_variables(equation)
 
         for input_var in input_vars:
-
-            value = soi_value_dict[input_var]
+            value = soi_df[soi_df["var_name"] == input_var]["value"].item()
 
             equation = equation.replace(input_var, str(value))
 
         value = eval(equation)
-        soi_value_dict[soi_name] = value
+        soi_value = value
+
+        soi_df.loc[len(soi_df)] = {
+            "soi_name": soi_name,
+            "var_name": soi_var_name,
+            "soi_description": soi_var_description,
+            "methodology": methodology,
+            "SECAP_link": SECAP_link,
+            "SDG_targets": SDG_targets,
+            "var_unit": var_unit,
+            "value": soi_value,
+        }
 
     # save calculated SOIs as excel
-    soi_calc_df = pd.DataFrame(
-        list(soi_value_dict.items()), columns=["var_name", "value"]
-    )
-
-    soi_calc_df.to_excel(
+    soi_df.to_excel(
         os.path.join(current_dir, "data", "output", f"SOIs_{region_code}.xlsx"),
         index=False,
     )
-    return soi_value_dict
+    return soi_df
 
 
-def fill_com_template(region_code, soi_value_dict, region_data):
+def fill_com_template(region_code, soi_df, region_data):
     """
     Fill the CoM template with calculated values.
     """
@@ -301,8 +363,10 @@ def fill_com_template(region_code, soi_value_dict, region_data):
                     min_row=1, max_row=max_row, min_col=1, max_col=max_column
                 ):
                     for cell in row:
-                        if cell.value in soi_value_dict:
-                            cell.value = soi_value_dict[cell.value]
+                        if cell.value in soi_df["var_name"]:
+                            cell.value = soi_df[soi_df["var_name"] == cell.value][
+                                "value"
+                            ].item()
                         elif (
                             isinstance(cell.value, str)
                             and cell.value in region_data["var_name"].values
@@ -348,5 +412,5 @@ def fill_com_template(region_code, soi_value_dict, region_data):
 if __name__ == "__main__":
     region_code = "DEA23"
     region_data = get_region_data(region_code)
-    soi_value_dict = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_value_dict, region_data)
+    soi_df = calculate_sois(region_code, region_data)
+    fill_com_template(region_code, soi_df, region_data)
