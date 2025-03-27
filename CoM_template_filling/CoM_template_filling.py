@@ -227,7 +227,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
 
                     equation = equation.replace(input_var, str(value))
 
-                # Evaluate the equation and append calculated value to the SOI dict
+                # Evaluate the equation
                 if "None" in equation:
                     soi_value = None
                 else:
