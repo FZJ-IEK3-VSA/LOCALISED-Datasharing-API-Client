@@ -75,8 +75,8 @@ target/
 # Jupyter NB Checkpoints
 .ipynb_checkpoints/
 
-# exclude data from source control by default
-/data/
+# exclude output data from CoM template filling
+/CoM_template_filling/data/output/
 
 # ignore static files 
 /zoomin/api/static/

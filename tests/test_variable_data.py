@@ -5,7 +5,11 @@ from zoomin_client import client
 
 def test_get_variable_metadata():
     """Check if variable metadata is returned."""
-    output = client.get_variable_metadata(variable="population", country_code="de")
+    output = client.get_variable_metadata(
+        version="v4",
+        country_code="lv",
+        variable="residential_final_energy_consumption_from_ethane",
+    )
 
     assert isinstance(output, list)
 
@@ -14,9 +18,10 @@ def test_get_variable_metadata():
 def test_get_variable_data(result_format):
     """Check if variable data is returned."""
     output = client.get_variable_data(
-        variable="population",
+        version="v4",
+        variable="tenancy_renters",
         spatial_resolution="LAU",
-        country_code="es",
+        country_code="lv",
         result_format=result_format,
     )
 
