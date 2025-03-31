@@ -44,7 +44,7 @@ Step-by-step instructions to access data, published on LOCALISED datasharing pla
             These codes are subject to change every 4 years. We follow NUTS 2016 codes. 
         - Region codes at LAU can be found on [Eurostat](https://ec.europa.eu/eurostat/de/web/nuts/local-administrative-units). 
             These codes are subject to change every year. We follow LAU2019 for all countries, except France and Italy. For these countries, LAU2018 is followed. 
-            The `region_code` parameter takes LAU codes in the form "< NUTS3 >_< LAU >". Therefore, please note append the parent NUTS3 region and an "_" to a LAU code. 
+            The `region_code` parameter takes LAU codes in the form "< NUTS3 > _ < LAU >". Therefore, please prepend the parent NUTS3 region and an "_" to a LAU code. 
             For example, LAU code of Eixen, Germany is "13073022". And its parent NUTS3 code is "DE80L". Therefore, `region_code` = "DE80L_13073022". 
 
             For a list of region codes, please query the region metadata. 
