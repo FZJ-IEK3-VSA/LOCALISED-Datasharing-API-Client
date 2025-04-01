@@ -361,14 +361,18 @@ def fill_com_template(region_code, soi_df, region_data):
                 max_row = sheet.max_row
                 max_column = min(sheet.max_column, 26)  # Limit to column Z
 
+                n_items_filled = 0
                 for row in sheet.iter_rows(
                     min_row=1, max_row=max_row, min_col=1, max_col=max_column
                 ):
                     for cell in row:
-                        if cell.value in soi_df["var_name"]:
+                        if cell.value in soi_df["var_name"].values:
                             cell.value = soi_df[soi_df["var_name"] == cell.value][
                                 "value"
                             ].item()
+
+                            n_items_filled = n_items_filled + 1
+
                         elif (
                             isinstance(cell.value, str)
                             and cell.value in region_data["var_name"].values
@@ -376,7 +380,11 @@ def fill_com_template(region_code, soi_df, region_data):
                             dsp_value = get_dsp_value(cell.value, region_data)
                             cell.value = dsp_value
 
-                logger.info(f"Finished filling {sheet_name}")
+                            n_items_filled = n_items_filled + 1
+
+                logger.info(
+                    f"Finished filling {sheet_name}, Number of items filled = {n_items_filled}"
+                )
             except Exception as e:
                 logger.error(f"Error filling sheet {sheet_name}: {str(e)}")
                 raise
@@ -412,7 +420,7 @@ def fill_com_template(region_code, soi_df, region_data):
 
 
 if __name__ == "__main__":
-    region_code = "DEA23"
+    region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
     fill_com_template(region_code, soi_df, region_data)
