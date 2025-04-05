@@ -1,18 +1,16 @@
 import os
 import sys
-
-# Add parent directory to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-
-
 import re
 import shutil
 import time
 from openpyxl import load_workbook
 import pandas as pd
 import logging
+
+# Add parent directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 from zoomin_client import client
 
@@ -312,7 +310,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     return soi_df
 
 
-def fill_com_template(region_code, soi_df, region_data):
+def fill_com_template(region_code, soi_df, region_data, output_dir=""):
     """
     Fill the CoM template with calculated values.
     """
@@ -324,7 +322,6 @@ def fill_com_template(region_code, soi_df, region_data):
         original_file_path = os.path.join(
             current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
         )
-        output_dir = os.path.join(current_dir, "data", "output")
         output_file_path = os.path.join(output_dir, f"CoM_{region_code}.xlsx")
 
         # Ensure output directory exists
@@ -420,7 +417,9 @@ def fill_com_template(region_code, soi_df, region_data):
 
 
 if __name__ == "__main__":
+    output_dir = os.path.join(current_dir, "data", "output")
+    print(output_dir)
     region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data)
+    fill_com_template(region_code, soi_df, region_data, output_dir=output_dir)
