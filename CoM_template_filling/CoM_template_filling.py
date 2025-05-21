@@ -363,6 +363,7 @@ def get_secap_filling_positions():
                     logger.info(f"row: {cell.row}, column: {cell.column}")
                     secap_filling_positions[sheet_name][cell.value] = {"position": [cell.row, cell.column]}
 
+    # TODO: add actions sheet
     input_dir = os.path.join(current_dir, "data", "input")
     with open(os.path.join(input_dir, f"secap_filling_positions_template.json"), "w") as f:
         logger.info(f"Saving secap filling positions to {os.path.join(input_dir, f'secap_filling_positions_template.json')}")
@@ -411,14 +412,33 @@ def merge_soi_vars_json_with_secap_filling_positions():
     with open(os.path.join(current_dir, "data", "input", f"secap_filling_positions_template_with_soi_names.json"), "w") as f:
         json.dump(secap_filling_positions, f, indent=4)
 
-def fill_actions_sheet(region_code="ES511_08019"):
+def fill_actions_sheet(sheet, action):
     """
     Fill the actions sheet with the calculated values.
     """ 
-    wb = load_workbook(os.path.join(current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"))
-    actions_sheet = wb["Actions"]
-    actions_sheet["C16"].value = "title of the action test"
-    wb.save(os.path.join(current_dir, "data", "output", f"CoM_{region_code}_actions.xlsx"))
+    max_row = 150
+    max_column = 15
+    items_filled = 0
+
+    logger.info(f"Filling actions sheet with action: {action['title']}")
+    try:
+        for row in sheet.iter_rows(min_row=1, max_row=max_row, min_col=1, max_col=max_column):
+            for cell in row:
+                if cell.value in action.keys():
+                        logger.info(f"Filling cell: {cell.value} with {action[cell.value]}")
+                        if isinstance(action[cell.value], list):
+                            cell.value = ", ".join(action[cell.value])
+                        elif action[cell.value] == "" or action[cell.value] is None:
+                            cell.value = None
+                        else:
+                            cell.value = action[cell.value]
+                        items_filled = items_filled + 1
+    except Exception as e:
+        logger.error(f"Failed to fill actions sheet: {str(e)}")
+        raise
+    finally:
+        logger.info(f"Items filled in sheet: {items_filled}, Total items in sheet: {len(action.keys())}")
+        logger.info(f"Finished filling actions sheet with action: {action['title']}")
 
 def get_active_dimensions(workbook_path):
     """
@@ -431,38 +451,41 @@ def get_active_dimensions(workbook_path):
         used_range = wb[sheet_name].calculate_dimension()
         logger.info(f"Used range for {sheet_name}: {used_range}")
 
-def clean_com_template(workbook_path):
+def clean_com_template(workbook_path, output_file_name):
     """
     Clean the CoM template
     """
     wb = load_workbook(workbook_path)
 
+    try:
+        workbook = load_workbook(workbook_path)
+        for sheet in workbook.worksheets:
+            sheet.data_validations.dataValidation = []  # remove validations
 
-def fill_com_template(region_code, soi_df, region_data, sheet_name):
+        # Save to a new file
+        workbook.save(os.path.join(current_dir, "data", "input", f"{output_file_name}.xlsx"))
+    except Exception as e:
+        logger.error(f"Failed to load workbook: {str(e)}")
+        raise
+
+
+def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
     """
     Fill the CoM template with calculated values.
     """
     logger.info(f"Starting CoM template filling for {region_code}")
     start = time.time() 
-
+    # with open("/home/komalve/projects/localisedprofiler/backend/test_jsons/actions_processed.json", "r") as f:
+    #     actions = json.load(f)
+    # logger.info(f"Actions Length-----------------------------------: {len(actions)}")
+    logger.info(f"Actions: {actions}")
     try:
         # Define file paths
         original_file_path = os.path.join(
-            current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
+            current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v6.xlsx"
         )
         logger.info(f"Original file path: {original_file_path}")
 
-        # Open the copied file
-        try:
-            workbook = load_workbook(original_file_path)
-            for sheet in workbook.worksheets:
-                sheet.data_validations.dataValidation = []  # remove validations
-
-            # Save to a new file (or overwrite if you're sure)
-            workbook.save(os.path.join(current_dir, "data", "input", f"CoM_cleaned_v4.xlsx"))
-        except Exception as e:
-            logger.error(f"Failed to load workbook: {str(e)}")
-            raise
         
         output_dir = os.path.join(current_dir, "data", "output")
         if sheet_name == "all_sheets":
@@ -473,11 +496,9 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name):
         # Ensure output directory exists
         os.makedirs(output_dir, exist_ok=True)
 
-        cleaned_file_path = os.path.join(current_dir, "data", "input", f"CoM_cleaned_v4.xlsx")
-
         # Make a copy of the original file
         try:
-            shutil.copy2(cleaned_file_path, output_file_path)
+            shutil.copy2(original_file_path, output_file_path)
             logger.info(f"Template copied to {output_file_path}")
         except Exception as e:
             logger.error(f"Failed to copy template: {str(e)}")
@@ -486,10 +507,15 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name):
         # Open the copied file
         try:
             workbook = load_workbook(output_file_path)
+            actions_sheet_template = workbook["Actions"]
+            for i in range(len(actions)):
+                new_sheet = workbook.copy_worksheet(actions_sheet_template)
+                new_sheet.title = f"Action {i+1}"
+
         except Exception as e:
             logger.error(f"Failed to load workbook: {str(e)}")
             raise
-        
+
         # fill sheets
         if sheet_name == "all_sheets":
             sheets_to_fill = [
@@ -555,7 +581,10 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name):
             except Exception as e:
                 logger.error(f"Error filling sheet {sheet_name}: {str(e)}")
                 raise
-
+        # the above logic fills GHG emissions, Risks & vulnerabilities, Energy poverty assessment
+        # Here we fill the actions sheet
+        for i in range(len(actions)):
+            fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
         # comment it out after an initial run
         # this is only to speed up things after the first run
         # with open(os.path.join(output_dir, f"secap_filling_positions.json"), "w") as f:
@@ -563,6 +592,8 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name):
 
         # Save and close the workbook
         try:
+            # removing sheets that are not needed
+            workbook.remove_sheet(workbook["Actions"])
             # Try to save with a temporary name first
             temp_path = output_file_path + ".tmp"
             workbook.save(temp_path)
@@ -600,4 +631,4 @@ if __name__ == "__main__":
     # soi_df = calculate_sois(region_code, region_data)
     # fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
     #fill_actions_sheet(region_code="ES511_08019")
-    get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v4.xlsx"))
+    get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
