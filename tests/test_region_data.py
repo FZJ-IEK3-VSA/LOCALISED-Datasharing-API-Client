@@ -1,12 +1,20 @@
 import os
 import pytest
 from zoomin_client import client
+from dotenv import load_dotenv, find_dotenv
+
+# find .env automagically by walking up directories until it's found
+dotenv_path = find_dotenv()
+# load up the entries as environment variables
+load_dotenv(dotenv_path)
+
+dsp_version = os.environ.get("DSP_VERSION")
 
 
 def test_get_region_data():
     """Check if region data is returned."""
     lau_output = client.get_region_data(
-        version="v4",
+        version=dsp_version,
         country_code="lv",
         region_code="LV007_0661000",
         result_format="df",
@@ -14,7 +22,7 @@ def test_get_region_data():
     )
 
     nuts3_output = client.get_region_data(
-        version="v4",
+        version=dsp_version,
         country_code="lv",
         region_code="LV007",
         result_format="df",
@@ -22,7 +30,7 @@ def test_get_region_data():
     )
 
     nuts2_output = client.get_region_data(
-        version="v4",
+        version=dsp_version,
         country_code="lv",
         region_code="LV00",
         result_format="df",
@@ -30,7 +38,7 @@ def test_get_region_data():
     )
 
     nuts0_output = client.get_region_data(
-        version="v4",
+        version=dsp_version,
         country_code="lv",
         region_code="LV",
         result_format="df",
