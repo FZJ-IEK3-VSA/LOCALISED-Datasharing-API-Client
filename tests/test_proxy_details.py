@@ -1,5 +1,14 @@
+import os
 import pytest
 from zoomin_client import client
+from dotenv import load_dotenv, find_dotenv
+
+# find .env automagically by walking up directories until it's found
+dotenv_path = find_dotenv()
+# load up the entries as environment variables
+load_dotenv(dotenv_path)
+
+dsp_version = os.environ.get("DSP_VERSION")
 
 
 @pytest.mark.parametrize(
@@ -18,7 +27,7 @@ from zoomin_client import client
 )
 def test_get_proxy_details(variable, output):
     result = client.get_proxy_details(
-        version="v4",
+        version=dsp_version,
         country_code="lv",
         variable=variable,
     )

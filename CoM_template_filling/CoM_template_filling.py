@@ -1,18 +1,16 @@
 import os
 import sys
-
-# Add parent directory to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-
-
 import re
 import shutil
 import time
 from openpyxl import load_workbook
 import pandas as pd
 import logging
+
+# Add parent directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
 
 from zoomin_client import client
 
@@ -34,7 +32,8 @@ def get_region_data(region_code, pathway_description="national", result_format="
     Get region data from the DSP
     """
     region_data = client.get_region_data(
-        version="v4",
+        version="v5",
+        mini_version=False,
         country_code=region_code[:2].lower(),
         region_code=region_code,
         pathway_description=pathway_description,
@@ -86,7 +85,7 @@ def extract_variables(equation):
     return [var.strip() for var in matches if not var.strip().isdigit()]
 
 
-def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5"):
+def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP8.5"):
     """
     Get value from DSP for a variable
     """
@@ -109,7 +108,7 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
                 & (
                     region_data["climate_experiment"] == climate_experiment
                 )  # 2020 value is taken
-            ]  #  RCP4.5 scenario is considered
+            ]  #  RCP8.5 scenario is considered
 
             if len(sub_region_data) == 0:
                 logger.warning(f"No data found for variable {variable}")
@@ -120,8 +119,8 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP4.5")
         elif variable.startswith("cimp_"):
             sub_region_data = region_data[
                 (region_data["var_name"] == variable)
-                & (region_data["climate_experiment"].isin(("RCP4.5", "Historical")))
-            ]  # Historical or RCP4.5 value is taken
+                & (region_data["climate_experiment"].isin(("RCP8.5", "Historical")))
+            ]  # Historical or RCP8.5 value is taken
             # for climate impact data
 
             if len(sub_region_data) == 0:
@@ -171,6 +170,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
             "SDG_targets",
             "var_unit",
             "value",
+            "data_last_update",
         ]
     )
 
@@ -188,10 +188,8 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     # SOI calculations using collected and EUCalc data
     soi_vars_with_dsp_input = soi_metadata_df[
         (~soi_metadata_df["var_name"].isna())
-        & (~soi_metadata_df["calculation"].isin(["BLANK", "TBD"]))
-        & (  # some SOIs are decided to be left blank or TBD yet
-            soi_metadata_df["data_source"] != "TOTAL"
-        )  # some SOIs are sum of other SOIs
+        & (soi_metadata_df["calculation"] != "TBD")  # some SOIs are TBD yet
+        & (soi_metadata_df["data_source"] != "TOTAL")  # some SOIs are sum of other SOIs
     ][
         [
             "soi_name",
@@ -205,7 +203,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         ]
     ]
 
-    for idx, row in soi_vars_with_dsp_input.iterrows():
+    for _, row in soi_vars_with_dsp_input.iterrows():
         soi_name = row["soi_name"]
         soi_var_name = row["var_name"]
         soi_var_description = row["soi_description"]
@@ -236,10 +234,26 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                     if soi_var_name.startswith("number_of"):
                         soi_value = round(soi_value)
 
+                # get data last update
+                data_last_update = region_data[
+                    region_data["var_name"] == input_vars[0]
+                ]["data_last_update"].values[
+                    0
+                ]  # the first variable is the one to consider for last update
+
+            # cases when its to be left blank
+            elif equation == "BLANK":
+                soi_value = ""
+
             # cases when its directly a variable from DSP
             else:
                 dsp_value = get_dsp_value(equation, region_data)
                 soi_value = dsp_value
+
+                # get data last update
+                data_last_update = region_data[region_data["var_name"] == equation][
+                    "data_last_update"
+                ].values[0]
 
         # some of the ratio calculations have 0/(0+0). This should result in 0
         except ZeroDivisionError:
@@ -254,6 +268,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
             "SDG_targets": SDG_targets,
             "var_unit": var_unit,
             "value": soi_value,
+            "data_last_update": data_last_update,
         }
 
     # SOI calculations using other SOIs - Totals
@@ -270,7 +285,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         ]
     ]
 
-    for idx, row in soi_vars_with_totals.iterrows():
+    for _, row in soi_vars_with_totals.iterrows():
 
         soi_name = row["soi_name"]
         soi_var_name = row["var_name"]
@@ -293,6 +308,11 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         value = eval(equation)
         soi_value = value
 
+        # get data last update
+        data_last_update = soi_df[soi_df["var_name"] == input_vars[0]][
+            "data_last_update"
+        ].item()  # the first variable is the one to consider for last update
+
         soi_df.loc[len(soi_df)] = {
             "soi_name": soi_name,
             "var_name": soi_var_name,
@@ -302,6 +322,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
             "SDG_targets": SDG_targets,
             "var_unit": var_unit,
             "value": soi_value,
+            "data_last_update": data_last_update,
         }
 
     # save calculated SOIs as excel
@@ -312,7 +333,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     return soi_df
 
 
-def fill_com_template(region_code, soi_df, region_data):
+def fill_com_template(region_code, soi_df, region_data, output_dir=""):
     """
     Fill the CoM template with calculated values.
     """
@@ -324,7 +345,6 @@ def fill_com_template(region_code, soi_df, region_data):
         original_file_path = os.path.join(
             current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
         )
-        output_dir = os.path.join(current_dir, "data", "output")
         output_file_path = os.path.join(output_dir, f"CoM_{region_code}.xlsx")
 
         # Ensure output directory exists
@@ -420,7 +440,8 @@ def fill_com_template(region_code, soi_df, region_data):
 
 
 if __name__ == "__main__":
+    output_dir = os.path.join(current_dir, "data", "output")
     region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data)
+    fill_com_template(region_code, soi_df, region_data, output_dir=output_dir)
