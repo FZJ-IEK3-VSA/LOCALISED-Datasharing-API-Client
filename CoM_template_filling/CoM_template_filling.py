@@ -3,14 +3,10 @@ import sys
 import re
 import shutil
 import time
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 import pandas as pd
 import logging
-
-# Add parent directory to Python path
-current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+import json
 
 from zoomin_client import client
 
@@ -332,20 +328,186 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     )
     return soi_df
 
+def get_secap_filling_positions():
+    """
+    Get the filling positions for the CoM template
+    
+    use template COM file and variables_with_details_and_tags.xlsx to get the filling positions
+    """
 
-def fill_com_template(region_code, soi_df, region_data, output_dir=""):
+    # reading CoM template file
+    original_file_path = os.path.join(
+        current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
+    )
+
+    # reading admin_business_and_social_KPIs sheet
+    soi_metadata_df = pd.read_excel(
+        os.path.join(
+            current_dir,
+            "data",
+            "input",
+            "variables_with_details_and_tags.xlsx",
+        ),
+            sheet_name="admin_business_and_social_KPIs",
+        )
+    logger.info(f"Total SOIs: {len(soi_metadata_df)}")
+        # Open the copied file
+    try:
+        workbook = load_workbook(original_file_path)
+    except Exception as e:
+        logger.error(f"Failed to load workbook: {str(e)}")
+        raise
+    
+    # fill sheets
+    sheets_to_fill = [
+            "GHG emissions",
+            "Risks & vulnerabilities",
+            "Energy poverty assessment",
+        ]
+
+    secap_filling_positions = {"GHG emissions": {}, "Risks & vulnerabilities": {}, "Energy poverty assessment": {}}
+    for sheet_name in sheets_to_fill:
+        sheet = workbook[sheet_name]
+        max_row = sheet.max_row
+        max_column = min(sheet.max_column, 26)  # Limit to column Z
+        logger.info(f"Reading sheet: {sheet_name}, max row: {max_row}, max column: {max_column}")
+        for row in sheet.iter_rows(
+            min_row=1, max_row=max_row, min_col=1, max_col=max_column
+        ):
+            for cell in row:
+                if cell.value in soi_metadata_df["var_name"].values:
+                    logger.info(f"row: {cell.row}, column: {cell.column}")
+                    secap_filling_positions[sheet_name][cell.value] = {"position": [cell.row, cell.column]}
+
+    # TODO: add actions sheet
+    input_dir = os.path.join(current_dir, "data", "input")
+    with open(os.path.join(input_dir, f"secap_filling_positions_template.json"), "w") as f:
+        logger.info(f"Saving secap filling positions to {os.path.join(input_dir, f'secap_filling_positions_template.json')}")
+        json.dump(secap_filling_positions, f, indent=4)
+
+def convert_soi_vars_excel_to_json():
+    """
+    Convert SOI variables from excel to json
+    """
+    soi_metadata_df = pd.read_excel(
+        os.path.join(
+            current_dir,
+            "data",
+            "input",
+            "variables_with_details_and_tags.xlsx",
+        ),
+        sheet_name="admin_business_and_social_KPIs",
+        usecols=["soi_name", "var_name"]
+    )
+    soi_json = json.loads(soi_metadata_df.to_json(orient="records"))
+    soi_json_modified = {}
+    for i in range(len(soi_json)):
+        soi_json_modified[soi_json[i]["var_name"]] = soi_json[i]["soi_name"]
+
+    with open(os.path.join(current_dir, "data", "input", f"soi_vars.json"), "w") as f:
+        json.dump(soi_json_modified, f, indent=4)
+
+def merge_soi_vars_json_with_secap_filling_positions():
+    """
+    Merge SOI variables from json with secap filling positions
+
+    The main reason for doing this: there is no one-to-one mapping between the SOI variable names and the CoM template positions.
+    This helps to show to the user in the right order as they are in the CoM template.
+    """
+    with open(os.path.join(current_dir, "data", "input", f"soi_vars.json"), "r") as f:
+        soi_json_modified = json.load(f)
+
+    with open(os.path.join(current_dir, "data", "input", f"secap_filling_positions_template.json"), "r") as f:
+        secap_filling_positions = json.load(f)
+
+    for sheet_name in secap_filling_positions.keys():
+        logger.info(f"Sheet name: {sheet_name}")
+        for soi_var in secap_filling_positions[sheet_name].keys():
+            secap_filling_positions[sheet_name][soi_var]["name"] = soi_json_modified[soi_var]
+    
+    with open(os.path.join(current_dir, "data", "input", f"secap_filling_positions_template_with_soi_names.json"), "w") as f:
+        json.dump(secap_filling_positions, f, indent=4)
+
+def fill_actions_sheet(sheet, action):
+    """
+    Fill the actions sheet with the calculated values.
+    """ 
+    max_row = 150
+    max_column = 15
+    items_filled = 0
+
+    logger.info(f"Filling actions sheet with action: {action['title']}")
+    try:
+        for row in sheet.iter_rows(min_row=1, max_row=max_row, min_col=1, max_col=max_column):
+            for cell in row:
+                if cell.value in action.keys():
+                        logger.info(f"Filling cell: {cell.value} with {action[cell.value]}")
+                        if isinstance(action[cell.value], list):
+                            cell.value = ", ".join(action[cell.value])
+                        elif action[cell.value] == "" or action[cell.value] is None:
+                            cell.value = None
+                        else:
+                            cell.value = action[cell.value]
+                        items_filled = items_filled + 1
+    except Exception as e:
+        logger.error(f"Failed to fill actions sheet: {str(e)}")
+        raise
+    finally:
+        logger.info(f"Items filled in sheet: {items_filled}, Total items in sheet: {len(action.keys())}")
+        logger.info(f"Finished filling actions sheet with action: {action['title']}")
+
+def get_active_dimensions(workbook_path):
+    """
+    Get the active dimensions of the CoM template
+    """
+    wb = load_workbook(workbook_path, data_only=True)
+    logger.info(f"Workbook path: {workbook_path}")
+    logger.info(f"Sheet names: {wb.sheetnames}")
+    for sheet_name in wb.sheetnames:
+        used_range = wb[sheet_name].calculate_dimension()
+        logger.info(f"Used range for {sheet_name}: {used_range}")
+
+def clean_com_template(workbook_path, output_file_name):
+    """
+    Clean the CoM template
+    """
+    wb = load_workbook(workbook_path)
+
+    try:
+        workbook = load_workbook(workbook_path)
+        for sheet in workbook.worksheets:
+            sheet.data_validations.dataValidation = []  # remove validations
+
+        # Save to a new file
+        workbook.save(os.path.join(current_dir, "data", "input", f"{output_file_name}.xlsx"))
+    except Exception as e:
+        logger.error(f"Failed to load workbook: {str(e)}")
+        raise
+
+
+def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
     """
     Fill the CoM template with calculated values.
     """
     logger.info(f"Starting CoM template filling for {region_code}")
-    start = time.time()
-
+    start = time.time() 
+    # with open("/home/komalve/projects/localisedprofiler/backend/test_jsons/actions_processed.json", "r") as f:
+    #     actions = json.load(f)
+    # logger.info(f"Actions Length-----------------------------------: {len(actions)}")
+    logger.info(f"Actions: {actions}")
     try:
         # Define file paths
         original_file_path = os.path.join(
-            current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
+            current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v6.xlsx"
         )
-        output_file_path = os.path.join(output_dir, f"CoM_{region_code}.xlsx")
+        logger.info(f"Original file path: {original_file_path}")
+
+        
+        output_dir = os.path.join(current_dir, "data", "output")
+        if sheet_name == "all_sheets":
+            output_file_path = os.path.join(output_dir, f"CoM_{region_code}.xlsx")
+        else:
+            output_file_path = os.path.join(output_dir, f"CoM_{region_code}_{sheet_name}.xlsx")
 
         # Ensure output directory exists
         os.makedirs(output_dir, exist_ok=True)
@@ -361,32 +523,54 @@ def fill_com_template(region_code, soi_df, region_data, output_dir=""):
         # Open the copied file
         try:
             workbook = load_workbook(output_file_path)
+            actions_sheet_template = workbook["Actions"]
+            for i in range(len(actions)):
+                new_sheet = workbook.copy_worksheet(actions_sheet_template)
+                new_sheet.title = f"Action {i+1}"
+
         except Exception as e:
             logger.error(f"Failed to load workbook: {str(e)}")
             raise
 
         # fill sheets
-        sheets_to_fill = [
-            "GHG emissions",
-            "Risks & vulnerabilities",
-            "Energy poverty assessment",
-        ]
+        if sheet_name == "all_sheets":
+            sheets_to_fill = [
+                "GHG emissions",
+                "Risks & vulnerabilities",
+                "Energy poverty assessment",
+            ]
+        else:
+            sheets_to_fill = [sheet_name]
+
+        # secap_filling_positions = {"GHG emissions": {}, "Risks & vulnerabilities": {}, "Energy poverty assessment": {}}
+        input_dir = os.path.join(current_dir, "data", "input")
+        try:
+            with open(os.path.join(input_dir, f"secap_filling_positions_template.json"), "r") as f:
+                secap_filling_positions = json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load secap filling positions: {str(e)}")
+            raise
 
         for sheet_name in sheets_to_fill:
             try:
                 sheet = workbook[sheet_name]
+                
                 logger.info(f"Filling sheet: {sheet_name}")
-
+                # TODO: replace with JSON file positions
                 # Get used range
                 max_row = sheet.max_row
+                logger.info(f"Max row: {max_row}")
                 max_column = min(sheet.max_column, 26)  # Limit to column Z
-
+                logger.info(f"Max column: {max_column}")
                 n_items_filled = 0
                 for row in sheet.iter_rows(
                     min_row=1, max_row=max_row, min_col=1, max_col=max_column
                 ):
                     for cell in row:
                         if cell.value in soi_df["var_name"].values:
+                            logger.info(f"row: {cell.row}, column: {cell.column}")
+                            #secap_filling_positions[sheet_name][cell.value] = [cell.row, cell.column]
+                            #logger.info(soi_df[soi_df["var_name"] == cell.value])
                             cell.value = soi_df[soi_df["var_name"] == cell.value][
                                 "value"
                             ].item()
@@ -402,15 +586,30 @@ def fill_com_template(region_code, soi_df, region_data, output_dir=""):
 
                             n_items_filled = n_items_filled + 1
 
+                        # elif cell.value == "title":
+                        #     logger.info(f"Filling actions sheet", cell.row, cell.column, cell.coordinate)
+                        #     # TODO: fill actions sheet
+                        #     cell.value = "title of the action test"
+                            
                 logger.info(
                     f"Finished filling {sheet_name}, Number of items filled = {n_items_filled}"
                 )
             except Exception as e:
                 logger.error(f"Error filling sheet {sheet_name}: {str(e)}")
                 raise
+        # the above logic fills GHG emissions, Risks & vulnerabilities, Energy poverty assessment
+        # Here we fill the actions sheet
+        for i in range(len(actions)):
+            fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
+        # comment it out after an initial run
+        # this is only to speed up things after the first run
+        # with open(os.path.join(output_dir, f"secap_filling_positions.json"), "w") as f:
+        #     json.dump(secap_filling_positions, f, indent=4)
 
         # Save and close the workbook
         try:
+            # removing sheets that are not needed
+            workbook.remove_sheet(workbook["Actions"])
             # Try to save with a temporary name first
             temp_path = output_file_path + ".tmp"
             workbook.save(temp_path)
@@ -440,8 +639,12 @@ def fill_com_template(region_code, soi_df, region_data, output_dir=""):
 
 
 if __name__ == "__main__":
-    output_dir = os.path.join(current_dir, "data", "output")
-    region_code = "ES511_08019"
-    region_data = get_region_data(region_code)
-    soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data, output_dir=output_dir)
+    # get_secap_filling_positions()
+    # convert_soi_vars_excel_to_json()
+    # merge_soi_vars_json_with_secap_filling_positions()
+    # region_code = "ES511_08019"
+    # region_data = get_region_data(region_code)
+    # soi_df = calculate_sois(region_code, region_data)
+    # fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
+    #fill_actions_sheet(region_code="ES511_08019")
+    get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
