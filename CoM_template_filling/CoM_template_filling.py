@@ -8,7 +8,13 @@ import pandas as pd
 import logging
 import json
 
+# Add parent directory to Python path
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+sys.path.append(parent_dir)
+
 from zoomin_client import client
+
 
 
 # Configure logger
@@ -28,7 +34,7 @@ def get_region_data(region_code, pathway_description="national", result_format="
     Get region data from the DSP
     """
     region_data = client.get_region_data(
-        version="v5",
+        version="v4",
         mini_version=False,
         country_code=region_code[:2].lower(),
         region_code=region_code,
@@ -203,7 +209,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         soi_name = row["soi_name"]
         soi_var_name = row["var_name"]
         soi_var_description = row["soi_description"]
-        methodology = row["methodology"]
+        methodology = row["methodology"]calculate_sois
         SECAP_link = row["SECAP_link"]
         SDG_targets = row["SDG_targets"]
         var_unit = row["var_unit"]
@@ -337,7 +343,7 @@ def get_secap_filling_positions():
 
     # reading CoM template file
     original_file_path = os.path.join(
-        current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v4.xlsx"
+        current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v6.xlsx"
     )
 
     # reading admin_business_and_social_KPIs sheet
@@ -639,12 +645,12 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
 
 
 if __name__ == "__main__":
-    # get_secap_filling_positions()
-    # convert_soi_vars_excel_to_json()
-    # merge_soi_vars_json_with_secap_filling_positions()
-    # region_code = "ES511_08019"
-    # region_data = get_region_data(region_code)
-    # soi_df = calculate_sois(region_code, region_data)
-    # fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
+    get_secap_filling_positions()
+    convert_soi_vars_excel_to_json()
+    merge_soi_vars_json_with_secap_filling_positions()
+    region_code = "ES511_08019"
+    region_data = get_region_data(region_code)
+    soi_df = calculate_sois(region_code, region_data)
+    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
     #fill_actions_sheet(region_code="ES511_08019")
-    get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
+    #get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
