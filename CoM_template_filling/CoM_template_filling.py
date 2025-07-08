@@ -237,11 +237,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                         soi_value = round(soi_value)
 
                 # get data last update
-                data_last_update = region_data[
-                    region_data["var_name"] == input_vars[0]
-                ]["data_last_update"].values[
-                    0
-                ]  # the first variable is the one to consider for last update
+                data_last_update = region_data[region_data["var_name"] == input_vars[0]]["data_last_update"].values[0]  # the first variable is the one to consider for last update
 
             # cases when its to be left blank
             elif equation == "BLANK":
@@ -645,9 +641,9 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
 
 
 if __name__ == "__main__":
-    # get_secap_filling_positions()
-    # convert_soi_vars_excel_to_json()
-    # merge_soi_vars_json_with_secap_filling_positions()
+    get_secap_filling_positions()
+    convert_soi_vars_excel_to_json()
+    merge_soi_vars_json_with_secap_filling_positions()
     region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
