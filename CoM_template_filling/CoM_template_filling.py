@@ -601,8 +601,9 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
                 raise
         # the above logic fills GHG emissions, Risks & vulnerabilities, Energy poverty assessment
         # Here we fill the actions sheet
-        for i in range(len(actions)):
-            fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
+        if len(actions) > 0:
+            for i in range(len(actions)):
+                fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
         # comment it out after an initial run
         # this is only to speed up things after the first run
         # with open(os.path.join(output_dir, f"secap_filling_positions.json"), "w") as f:
@@ -641,12 +642,12 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
 
 
 if __name__ == "__main__":
-    get_secap_filling_positions()
-    convert_soi_vars_excel_to_json()
-    merge_soi_vars_json_with_secap_filling_positions()
-    region_code = "ES511_08019"
+    # get_secap_filling_positions()
+    # convert_soi_vars_excel_to_json()
+    # merge_soi_vars_json_with_secap_filling_positions()
+    region_code = "DE300"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
+    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets", actions=[])
     #fill_actions_sheet(region_code="ES511_08019")
     #get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
