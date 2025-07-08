@@ -209,7 +209,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         soi_name = row["soi_name"]
         soi_var_name = row["var_name"]
         soi_var_description = row["soi_description"]
-        methodology = row["methodology"]calculate_sois
+        methodology = row["methodology"]
         SECAP_link = row["SECAP_link"]
         SDG_targets = row["SDG_targets"]
         var_unit = row["var_unit"]
@@ -645,9 +645,9 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
 
 
 if __name__ == "__main__":
-    get_secap_filling_positions()
-    convert_soi_vars_excel_to_json()
-    merge_soi_vars_json_with_secap_filling_positions()
+    # get_secap_filling_positions()
+    # convert_soi_vars_excel_to_json()
+    # merge_soi_vars_json_with_secap_filling_positions()
     region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
