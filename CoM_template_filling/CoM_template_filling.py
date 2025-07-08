@@ -34,7 +34,7 @@ def get_region_data(region_code, pathway_description="national", result_format="
     Get region data from the DSP
     """
     region_data = client.get_region_data(
-        version="v4",
+        version="v5",
         mini_version=False,
         country_code=region_code[:2].lower(),
         region_code=region_code,
