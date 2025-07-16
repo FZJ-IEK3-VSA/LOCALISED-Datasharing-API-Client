@@ -3,7 +3,7 @@
 LOCALISED Datasharing API Client
 ==============================
 
-Step-by-step instructions to access data, published on LOCALISED datasharing platform, via our API client. The official API documentation can be found under http://data.localised-project.eu/api/v1/docs/)
+Step-by-step instructions to access data, published on LOCALISED datasharing platform, via our API client. The official API documentation can be found under [http://data.localised-project.eu/api/docs/](http://data.localised-project.eu/dsp/docs/))
 
 0. Before you begin, please make sure you have mamba installed in your base environment:
     ```bash
