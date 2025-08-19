@@ -158,6 +158,23 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP8.5")
         return 0
 
 
+def _get_data_last_update_for_variable(region_data: pd.DataFrame, variable_name: str):
+    """
+    Safely return the data_last_update value for a given variable from region_data.
+    Returns None if the column or value is unavailable.
+    """
+    try:
+        if "data_last_update" not in region_data.columns:
+            return None
+        filtered = region_data[region_data["var_name"] == variable_name]
+        if filtered.empty:
+            return None
+        values = filtered["data_last_update"].values
+        return values[0] if len(values) > 0 else None
+    except Exception:
+        return None
+
+
 def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     """
     Calculate SOIs for a region.
@@ -237,11 +254,14 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                         soi_value = round(soi_value)
 
                 # get data last update
-                data_last_update = region_data[region_data["var_name"] == input_vars[0]]["data_last_update"].values[0]  # the first variable is the one to consider for last update
+                data_last_update = _get_data_last_update_for_variable(
+                    region_data, input_vars[0]
+                )  # the first variable is the one to consider for last update
 
             # cases when its to be left blank
             elif equation == "BLANK":
                 soi_value = ""
+                data_last_update = None
 
             # cases when its directly a variable from DSP
             else:
@@ -249,9 +269,9 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                 soi_value = dsp_value
 
                 # get data last update
-                data_last_update = region_data[region_data["var_name"] == equation][
-                    "data_last_update"
-                ].values[0]
+                data_last_update = _get_data_last_update_for_variable(
+                    region_data, equation
+                )
 
         # some of the ratio calculations have 0/(0+0). This should result in 0
         except ZeroDivisionError:
