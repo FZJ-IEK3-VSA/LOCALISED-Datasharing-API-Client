@@ -493,9 +493,7 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
     """
     logger.info(f"Starting CoM template filling for {region_code}")
     start = time.time() 
-    # with open("/home/komalve/projects/localisedprofiler/backend/test_jsons/actions_processed.json", "r") as f:
-    #     actions = json.load(f)
-    # logger.info(f"Actions Length-----------------------------------: {len(actions)}")
+
     logger.info(f"Actions: {actions}")
     try:
         # Define file paths
@@ -526,9 +524,11 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
         try:
             workbook = load_workbook(output_file_path)
             actions_sheet_template = workbook["Actions"]
-            for i in range(len(actions)):
-                new_sheet = workbook.copy_worksheet(actions_sheet_template)
-                new_sheet.title = f"Action {i+1}"
+            # Check if actions exist before creating sheets
+            if actions is not None:
+                for i in range(len(actions)):
+                    new_sheet = workbook.copy_worksheet(actions_sheet_template)
+                    new_sheet.title = f"Action {i+1}"
 
         except Exception as e:
             logger.error(f"Failed to load workbook: {str(e)}")
@@ -601,7 +601,7 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
                 raise
         # the above logic fills GHG emissions, Risks & vulnerabilities, Energy poverty assessment
         # Here we fill the actions sheet
-        if len(actions) > 0:
+        if actions is not None:
             for i in range(len(actions)):
                 fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
         # comment it out after an initial run
@@ -645,9 +645,9 @@ if __name__ == "__main__":
     # get_secap_filling_positions()
     # convert_soi_vars_excel_to_json()
     # merge_soi_vars_json_with_secap_filling_positions()
-    region_code = "DE300"
+    region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets", actions=[])
-    #fill_actions_sheet(region_code="ES511_08019")
-    #get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
+    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets", actions=None)
+    # fill_actions_sheet(region_code="ES511_08019")
+    # get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v6.xlsx"))
