@@ -1,0 +1,1226 @@
+{
+    "GHG emissions": {
+        "final_energy_consumption_of_public_buildings_per_year": {
+            "position": [
+                39,
+                20
+            ],
+            "name": "Final energy consumption of public buildings per year"
+        },
+        "residential_final_energy_consumption_from_electricity": {
+            "position": [
+                45,
+                4
+            ],
+            "name": "Residential final energy consumption from electricity"
+        },
+        "residential_final_energy_consumption_from_natural_gas": {
+            "position": [
+                45,
+                6
+            ],
+            "name": "Residential final energy consumption from natural gas"
+        },
+        "residential_final_energy_consumption_from_liquid_gas": {
+            "position": [
+                45,
+                7
+            ],
+            "name": "Residential final energy consumption from liquid gas"
+        },
+        "residential_final_energy_consumption_from_heating_oil": {
+            "position": [
+                45,
+                8
+            ],
+            "name": "Residential final energy consumption from heating oil"
+        },
+        "residential_final_energy_consumption_from_diesel": {
+            "position": [
+                45,
+                9
+            ],
+            "name": "Residential final energy consumption from diesel"
+        },
+        "residential_final_energy_consumption_from_gasoline": {
+            "position": [
+                45,
+                10
+            ],
+            "name": "Residential final energy consumption from gasoline"
+        },
+        "residential_final_energy_consumption_from_lignite": {
+            "position": [
+                45,
+                11
+            ],
+            "name": "Residential final energy consumption from lignite"
+        },
+        "residential_final_energy_consumption_from_coal": {
+            "position": [
+                45,
+                12
+            ],
+            "name": "Residential final energy consumption from coal"
+        },
+        "residential_final_energy_consumption_from_other_fossil_fuels": {
+            "position": [
+                45,
+                13
+            ],
+            "name": "Residential final energy consumption from other fossil fuels"
+        },
+        "residential_final_energy_consumption_from_biogas": {
+            "position": [
+                45,
+                14
+            ],
+            "name": "Residential final energy consumption from biogas"
+        },
+        "residential_final_energy_consumption_from_plant_oil": {
+            "position": [
+                45,
+                15
+            ],
+            "name": "Residential final energy consumption from plant oil"
+        },
+        "residential_final_energy_consumption_from_biofuel": {
+            "position": [
+                45,
+                16
+            ],
+            "name": "Residential final energy consumption from biofuel"
+        },
+        "residential_final_energy_consumption_from_other_biomass": {
+            "position": [
+                45,
+                17
+            ],
+            "name": "Residential final energy consumption from other biomass"
+        },
+        "residential_final_energy_consumption_from_solar_thermal": {
+            "position": [
+                45,
+                18
+            ],
+            "name": "Residential final energy consumption from solar thermal"
+        },
+        "residential_final_energy_consumption_from_geothermal": {
+            "position": [
+                45,
+                19
+            ],
+            "name": "Residential final energy consumption from geothermal"
+        },
+        "total_residential_final_energy_consumption": {
+            "position": [
+                45,
+                20
+            ],
+            "name": "Total residential final energy consumption"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_electricity": {
+            "position": [
+                46,
+                4
+            ],
+            "name": "final energy consumption in non-ETS industries from electricity"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_natural_gas": {
+            "position": [
+                46,
+                6
+            ],
+            "name": "final energy consumption in non-ETS industries from natural gas"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_liquid_gas": {
+            "position": [
+                46,
+                7
+            ],
+            "name": "final energy consumption in non-ETS industries from liquid gas"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_heating_oil": {
+            "position": [
+                46,
+                8
+            ],
+            "name": "final energy consumption in non-ETS industries from heating oil"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_diesel": {
+            "position": [
+                46,
+                9
+            ],
+            "name": "final energy consumption in non-ETS industries from diesel"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_gasoline": {
+            "position": [
+                46,
+                10
+            ],
+            "name": "final energy consumption in non-ETS industries from gasoline"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_lignite": {
+            "position": [
+                46,
+                11
+            ],
+            "name": "final energy consumption in non-ETS industries from lignite"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_coal": {
+            "position": [
+                46,
+                12
+            ],
+            "name": "final energy consumption in non-ETS industries from coal"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_other_fossil_fuels": {
+            "position": [
+                46,
+                13
+            ],
+            "name": "final energy consumption in non-ETS industries from other fossil fuels"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_biogas": {
+            "position": [
+                46,
+                14
+            ],
+            "name": "final energy consumption in non-ETS industries from biogas"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_plant_oil": {
+            "position": [
+                46,
+                15
+            ],
+            "name": "final energy consumption in non-ETS industries from plant oil"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_biofuel": {
+            "position": [
+                46,
+                16
+            ],
+            "name": "final energy consumption in non-ETS industries from biofuel"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_other_biomass": {
+            "position": [
+                46,
+                17
+            ],
+            "name": "final energy consumption in non-ETS industries from other biomass"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_solar_thermal": {
+            "position": [
+                46,
+                18
+            ],
+            "name": "final energy consumption in non-ETS industries from solar thermal"
+        },
+        "final_energy_consumption_in_non_ets_industries_from_geothermal": {
+            "position": [
+                46,
+                19
+            ],
+            "name": "final energy consumption in non-ETS industries from geothermal"
+        },
+        "total_final_energy_consumption_in_non_ets_industries": {
+            "position": [
+                46,
+                20
+            ],
+            "name": "Total final energy consumption in non-ETS industries"
+        },
+        "final_energy_consumption_in_ets_industries_from_electricity": {
+            "position": [
+                47,
+                4
+            ],
+            "name": "final energy consumption in ETS industries from electricity"
+        },
+        "final_energy_consumption_in_ets_industries_from_natural_gas": {
+            "position": [
+                47,
+                6
+            ],
+            "name": "final energy consumption in ETS industries from natural gas"
+        },
+        "final_energy_consumption_in_ets_industries_from_liquid_gas": {
+            "position": [
+                47,
+                7
+            ],
+            "name": "final energy consumption in ETS industries from liquid gas"
+        },
+        "final_energy_consumption_in_ets_industries_from_heating_oil": {
+            "position": [
+                47,
+                8
+            ],
+            "name": "final energy consumption in ETS industries from heating oil"
+        },
+        "final_energy_consumption_in_ets_industries_from_diesel": {
+            "position": [
+                47,
+                9
+            ],
+            "name": "final energy consumption in ETS industries from diesel"
+        },
+        "final_energy_consumption_in_ets_industries_from_gasoline": {
+            "position": [
+                47,
+                10
+            ],
+            "name": "final energy consumption in ETS industries from gasoline"
+        },
+        "final_energy_consumption_in_ets_industries_from_lignite": {
+            "position": [
+                47,
+                11
+            ],
+            "name": "final energy consumption in ETS industries from lignite"
+        },
+        "final_energy_consumption_in_ets_industries_from_coal": {
+            "position": [
+                47,
+                12
+            ],
+            "name": "final energy consumption in ETS industries from coal"
+        },
+        "final_energy_consumption_in_ets_industries_from_other_fossil_fuels": {
+            "position": [
+                47,
+                13
+            ],
+            "name": "final energy consumption in ETS industries from other fossil fuels"
+        },
+        "final_energy_consumption_in_ets_industries_from_biogas": {
+            "position": [
+                47,
+                14
+            ],
+            "name": "final energy consumption in ETS industries from biogas"
+        },
+        "final_energy_consumption_in_ets_industries_from_plant_oil": {
+            "position": [
+                47,
+                15
+            ],
+            "name": "final energy consumption in ETS industries from plant oil"
+        },
+        "final_energy_consumption_in_ets_industries_from_biofuel": {
+            "position": [
+                47,
+                16
+            ],
+            "name": "final energy consumption in ETS industries from biofuel"
+        },
+        "final_energy_consumption_in_ets_industries_from_other_biomass": {
+            "position": [
+                47,
+                17
+            ],
+            "name": "final energy consumption in ETS industries from other biomass"
+        },
+        "final_energy_consumption_in_ets_industries_from_solar_thermal": {
+            "position": [
+                47,
+                18
+            ],
+            "name": "final energy consumption in ETS industries from solar thermal"
+        },
+        "final_energy_consumption_in_ets_industries_from_geothermal": {
+            "position": [
+                47,
+                19
+            ],
+            "name": "final energy consumption in ETS industries from geothermal"
+        },
+        "total_final_energy_consumption_in_ets_industries": {
+            "position": [
+                47,
+                20
+            ],
+            "name": "Total final energy consumption in ETS industries"
+        },
+        "transport_energy_consumption_from_electricity": {
+            "position": [
+                66,
+                4
+            ],
+            "name": "Transport energy consumption from electricity"
+        },
+        "transport_energy_consumption_from_natural_gas": {
+            "position": [
+                66,
+                6
+            ],
+            "name": "Transport energy consumption from natural gas"
+        },
+        "transport_energy_consumption_from_liquefied_petroleum_gases": {
+            "position": [
+                66,
+                7
+            ],
+            "name": "Transport energy consumption from liquefied petroleum gases"
+        },
+        "transport_energy_consumption_from_gas_and_diesel_oil": {
+            "position": [
+                66,
+                9
+            ],
+            "name": "Transport energy consumption from gas and diesel oil"
+        },
+        "transport_energy_consumption_from_motor_gasoline": {
+            "position": [
+                66,
+                10
+            ],
+            "name": "Transport energy consumption from motor gasoline"
+        },
+        "transport_energy_consumption_from_other_fossil_fuels": {
+            "position": [
+                66,
+                13
+            ],
+            "name": "Transport energy consumption from other fossil fuels"
+        },
+        "transport_energy_consumption_from_biogases": {
+            "position": [
+                66,
+                14
+            ],
+            "name": "Transport energy consumption from biogases"
+        },
+        "transport_energy_consumption_from_biofuel": {
+            "position": [
+                66,
+                16
+            ],
+            "name": "Transport energy consumption from biofuel"
+        },
+        "total_final_energy_consumption_in_transport": {
+            "position": [
+                66,
+                20
+            ],
+            "name": "Total final energy consumption in Transport"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_electricity": {
+            "position": [
+                68,
+                4
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from electricity"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_natural_gas": {
+            "position": [
+                68,
+                6
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from natural gas"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_liquid_gas": {
+            "position": [
+                68,
+                7
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from liquid gas"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_heating_oil": {
+            "position": [
+                68,
+                8
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from heating oil"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_diesel": {
+            "position": [
+                68,
+                9
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from diesel"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_gasoline": {
+            "position": [
+                68,
+                10
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from gasoline"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_lignite": {
+            "position": [
+                68,
+                11
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from lignite"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_coal": {
+            "position": [
+                68,
+                12
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from coal"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_other_fossil_fuels": {
+            "position": [
+                68,
+                13
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from other fossil fuels"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_biogas": {
+            "position": [
+                68,
+                14
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from biogas"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_plant_oil": {
+            "position": [
+                68,
+                15
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from plant oil"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_biofuel": {
+            "position": [
+                68,
+                16
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from biofuel"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_other_biomass": {
+            "position": [
+                68,
+                17
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from other biomass"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_solar_thermal": {
+            "position": [
+                68,
+                18
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from solar thermal"
+        },
+        "final_energy_consumption_in_agriculture_forestry_and_fisheries_from_geothermal": {
+            "position": [
+                68,
+                19
+            ],
+            "name": "final energy consumption in agriculture, forestry and fisheries from geothermal"
+        },
+        "total_final_energy_consumption_in_agriculture_forestry_and_fisheries": {
+            "position": [
+                68,
+                20
+            ],
+            "name": "Total final energy consumption in agriculture, forestry and fisheries"
+        },
+        "electricity_production_from_wind": {
+            "position": [
+                88,
+                4
+            ],
+            "name": "Electricity production from wind"
+        },
+        "electricity_production_from_hydropower": {
+            "position": [
+                89,
+                4
+            ],
+            "name": "Electricity production from hydropower"
+        },
+        "electricity_production_from_photovoltaics": {
+            "position": [
+                90,
+                4
+            ],
+            "name": "Electricity production from photovoltaics"
+        },
+        "electricity_production_from_geothermal": {
+            "position": [
+                91,
+                4
+            ],
+            "name": "Electricity production from geothermal"
+        },
+        "electricity_production_from_marine_power": {
+            "position": [
+                92,
+                4
+            ],
+            "name": "Electricity production from marine power"
+        },
+        "electricity_production_from_concentrated_solar_power": {
+            "position": [
+                93,
+                4
+            ],
+            "name": "Electricity production from concentrated solar power"
+        },
+        "electricity_production_from_biogas": {
+            "position": [
+                94,
+                4
+            ],
+            "name": "Electricity production from biogas"
+        },
+        "electricity_production_from_biomass": {
+            "position": [
+                95,
+                4
+            ],
+            "name": "Electricity production from biomass"
+        },
+        "electricity_produced_from_renewable_resources": {
+            "position": [
+                103,
+                4
+            ],
+            "name": "Electricity produced from renewable resources"
+        },
+        "electricity_produced_from_non_renewable_resources": {
+            "position": [
+                103,
+                5
+            ],
+            "name": "Electricity produced from non-renewable resources"
+        },
+        "co2_emissions_per_mwh_or_gigawatt_electricity_consumed_or_carbon_content_in_electricity": {
+            "position": [
+                125,
+                4
+            ],
+            "name": "CO2 emissions (per MWh or gigawatt) electricity consumed or Carbon content in electricity"
+        }
+    },
+    "Risks & vulnerabilities": {
+        "hazard_current_probability_low_moderate_high_not_known_heatwaves": {
+            "position": [
+                16,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - heatwaves"
+        },
+        "hazards_impact_low_moderate_high_not_known_heatwaves": {
+            "position": [
+                16,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - heatwaves"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_heatwaves": {
+            "position": [
+                16,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - heatwaves"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_heatwaves": {
+            "position": [
+                16,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - heatwaves"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_heatwaves": {
+            "position": [
+                16,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - heatwaves"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_coldwaves": {
+            "position": [
+                17,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - coldwaves"
+        },
+        "hazards_impact_low_moderate_high_not_known_coldwaves": {
+            "position": [
+                17,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - coldwaves"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_coldwaves": {
+            "position": [
+                17,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - coldwaves"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_coldwaves": {
+            "position": [
+                17,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - coldwaves"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_coldwaves": {
+            "position": [
+                17,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - coldwaves"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_heavy_precipitation": {
+            "position": [
+                18,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - Heavy precipitation"
+        },
+        "hazards_impact_low_moderate_high_not_known_heavy_precipitation": {
+            "position": [
+                18,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - Heavy precipitation"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_heavy_precipitation": {
+            "position": [
+                18,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - Heavy precipitation"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_heavy_precipitation": {
+            "position": [
+                18,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - Heavy precipitation"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_heavy_precipitation": {
+            "position": [
+                18,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - Heavy precipitation"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_floods": {
+            "position": [
+                23,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - floods"
+        },
+        "hazards_impact_low_moderate_high_not_known_floods": {
+            "position": [
+                23,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - floods"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_floods": {
+            "position": [
+                23,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - floods"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_floods": {
+            "position": [
+                23,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - floods"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_floods": {
+            "position": [
+                23,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - floods"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_droughts": {
+            "position": [
+                29,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - droughts"
+        },
+        "hazards_impact_low_moderate_high_not_known_droughts": {
+            "position": [
+                29,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - droughts"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_droughts": {
+            "position": [
+                29,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - droughts"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_droughts": {
+            "position": [
+                29,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - droughts"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_droughts": {
+            "position": [
+                29,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - droughts"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_fire_risk": {
+            "position": [
+                43,
+                5
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - Fire risk"
+        },
+        "hazards_impact_low_moderate_high_not_known_fire_risk": {
+            "position": [
+                43,
+                6
+            ],
+            "name": "Hazards Impact (Low, moderate, high, not known) - Fire risk"
+        },
+        "hazards_expected_change_in_intensity_increase_decrease_no_change_not_known_fire_risk": {
+            "position": [
+                43,
+                7
+            ],
+            "name": "Hazards Expected change in intensity (increase, decrease, no change, not known) - Fire risk"
+        },
+        "hazards_expected_change_in_frequency_increase_decrease_no_change_not_known_fire_risk": {
+            "position": [
+                43,
+                8
+            ],
+            "name": "Hazards Expected change in frequency (increase, decrease, no change, not known) - Fire risk"
+        },
+        "hazards_timeframe_current_short_term_medium_term_long_term_not_known_fire_risk": {
+            "position": [
+                43,
+                9
+            ],
+            "name": "Hazards Timeframe (current, short-term, medium-term, long-term, not known) - Fire risk"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_extreme_temperature": {
+            "position": [
+                63,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Extreme temperature"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_floods": {
+            "position": [
+                65,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Floods"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_drought": {
+            "position": [
+                66,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Drought"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_storm": {
+            "position": [
+                67,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Storm"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_mass_movement": {
+            "position": [
+                68,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Mass movement"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_wildfires": {
+            "position": [
+                69,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Wildfires"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_landslides": {
+            "position": [
+                70,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Landslides"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_earthquakes": {
+            "position": [
+                71,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Earthquakes"
+        },
+        "number_of_deaths_missing_persons_and_persons_affected_by_disaster_per_100000_people_volcanic_activity": {
+            "position": [
+                72,
+                9
+            ],
+            "name": "Number of deaths, missing persons and persons affected by disaster per 100,000 people - Volcanic activity"
+        },
+        "number_of_deaths_due_to_accidental_poisoning_by_and_exposure_to_noxious_substances_per_100000_people": {
+            "position": [
+                73,
+                9
+            ],
+            "name": "Number of deaths due to accidental poisoning by and exposure to noxious substances per 100000 people"
+        },
+        "forest_area": {
+            "position": [
+                75,
+                9
+            ],
+            "name": "Forest area"
+        },
+        "red_list_index": {
+            "position": [
+                76,
+                9
+            ],
+            "name": "Red List Index"
+        },
+        "number_of_tourist_accommodation_places_with_respect_to_the_residential_population": {
+            "position": [
+                77,
+                9
+            ],
+            "name": "Number of tourist accommodation places with respect to the residential population"
+        },
+        "number_of_bovines": {
+            "position": [
+                78,
+                9
+            ],
+            "name": "number of bovines"
+        },
+        "number_of_other_animals": {
+            "position": [
+                79,
+                9
+            ],
+            "name": "number of other animals"
+        },
+        "number_of_pigs": {
+            "position": [
+                80,
+                9
+            ],
+            "name": "number of pigs"
+        },
+        "number_of_poultry": {
+            "position": [
+                81,
+                9
+            ],
+            "name": "number of poultry"
+        },
+        "number_of_sheeps": {
+            "position": [
+                82,
+                9
+            ],
+            "name": "number of sheeps"
+        },
+        "agricultural_production_algae": {
+            "position": [
+                83,
+                9
+            ],
+            "name": "Agricultural production - algae"
+        },
+        "agricultural_production_cereal": {
+            "position": [
+                84,
+                9
+            ],
+            "name": "Agricultural production - cereal"
+        },
+        "agricultural_production_fruit": {
+            "position": [
+                85,
+                9
+            ],
+            "name": "Agricultural production - fruit"
+        },
+        "agricultural_production_energy_crop": {
+            "position": [
+                86,
+                9
+            ],
+            "name": "Agricultural production - energy crop"
+        },
+        "agricultural_production_oilcrop": {
+            "position": [
+                87,
+                9
+            ],
+            "name": "Agricultural production - oilcrop"
+        },
+        "agricultural_production_pulse": {
+            "position": [
+                88,
+                9
+            ],
+            "name": "Agricultural production - pulse"
+        },
+        "agricultural_production_rice": {
+            "position": [
+                89,
+                9
+            ],
+            "name": "Agricultural production - rice"
+        },
+        "agricultural_production_starch": {
+            "position": [
+                90,
+                9
+            ],
+            "name": "Agricultural production - starch"
+        },
+        "agricultural_production_sugarcrop": {
+            "position": [
+                91,
+                9
+            ],
+            "name": "Agricultural production - sugarcrop"
+        },
+        "agricultural_production_vegetables": {
+            "position": [
+                92,
+                9
+            ],
+            "name": "Agricultural production - vegetables"
+        },
+        "soil_sealing_or_artificial_coverage": {
+            "position": [
+                93,
+                9
+            ],
+            "name": "Soil sealing or artificial coverage"
+        },
+        "mortality_rate_attributed_to_unsafe_water_unsafe_sanitation_and_lack_of_hygiene": {
+            "position": [
+                94,
+                9
+            ],
+            "name": "Mortality rate attributed to unsafe water, unsafe sanitation and lack of hygiene"
+        },
+        "years_of_life_lost_due_to_air_pollution": {
+            "position": [
+                95,
+                9
+            ],
+            "name": "years of life lost due to air pollution"
+        },
+        "health_situation": {
+            "position": [
+                96,
+                9
+            ],
+            "name": "Health situation"
+        },
+        "population_exposed_to_flood_risk_or_flood_prone_population": {
+            "position": [
+                116,
+                10
+            ],
+            "name": "Population exposed to flood risk or flood prone population"
+        },
+        "exposure_of_vulnerable_people_to_heat_waves": {
+            "position": [
+                144,
+                6
+            ],
+            "name": "Exposure of vulnerable people to Heat waves"
+        },
+        "urban_flood_risk_or_areas_exposed_to_flooding": {
+            "position": [
+                118,
+                10
+            ],
+            "name": "Urban Flood Risk or areas exposed to flooding"
+        },
+        "terrestrial_protected_areas": {
+            "position": [
+                119,
+                10
+            ],
+            "name": "Terrestrial protected areas"
+        },
+        "organic_crop_area_as_a_percentage_of_total_agricultural_area": {
+            "position": [
+                120,
+                10
+            ],
+            "name": "Organic crop area as a percentage of total agricultural area"
+        },
+        "percentage_of_total_area_protected_as_natural_sites": {
+            "position": [
+                121,
+                10
+            ],
+            "name": "Percentage of total area protected as natural sites"
+        },
+        "percentage_of_green_urban_areas": {
+            "position": [
+                122,
+                10
+            ],
+            "name": "Percentage of green urban areas"
+        },
+        "average_air_pollution_due_to_pm25": {
+            "position": [
+                123,
+                10
+            ],
+            "name": "Average air pollution due to PM2.5"
+        },
+        "average_air_pollution_due_to_no2": {
+            "position": [
+                124,
+                10
+            ],
+            "name": "Average air pollution due to NO2"
+        },
+        "average_air_pollution_due_to_o3": {
+            "position": [
+                125,
+                10
+            ],
+            "name": "Average air pollution due to O3"
+        },
+        "green_urban_area_per_inhabitant": {
+            "position": [
+                126,
+                10
+            ],
+            "name": "Green urban area per inhabitant"
+        },
+        "public_attitudes_to_climate_change_and_energy_how_likely_the_impact_of_climate_change_will_be_very_bad": {
+            "position": [
+                127,
+                10
+            ],
+            "name": "Public attitudes to Climate Change and Energy. How likely the impact of climate change will be very bad"
+        }
+    },
+    "Energy poverty assessment": {
+        "hazard_current_probability_low_moderate_high_not_known_heatwaves": {
+            "position": [
+                6,
+                7
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - heatwaves"
+        },
+        "hazard_current_probability_low_moderate_high_not_known_coldwaves": {
+            "position": [
+                7,
+                7
+            ],
+            "name": "Hazard Current probability (Low, moderate, high, not known) - coldwaves"
+        },
+        "heating_degree_days_needed_to_maintain_an_average_building_indoor_temperature_of_155_degree_celsius": {
+            "position": [
+                8,
+                7
+            ],
+            "name": "Heating degree-days needed to maintain an average building indoor temperature of 15.5 degree Celsius"
+        },
+        "cooling_degree_days_needed_to_maintain_an_average_building_indoor_temperature_of_22_degree_celsius": {
+            "position": [
+                9,
+                7
+            ],
+            "name": "Cooling degree-days needed to maintain an average building indoor temperature of 22 degree Celsius"
+        },
+        "proportion_of_population_with_access_to_electricity": {
+            "position": [
+                17,
+                7
+            ],
+            "name": "Proportion of population with access to electricity"
+        },
+        "electricity_consumption_per_capita": {
+            "position": [
+                19,
+                7
+            ],
+            "name": "Electricity consumption per capita"
+        },
+        "energy_consumption_of_households_for_heating": {
+            "position": [
+                20,
+                7
+            ],
+            "name": "Energy consumption of households for heating"
+        },
+        "tenancy": {
+            "position": [
+                21,
+                7
+            ],
+            "name": "Tenancy"
+        },
+        "families_or_households_that_allocate_more_than_40%_of_their_resources_to_housing_expenditures_or_services_or_housing_cost_burden": {
+            "position": [
+                27,
+                7
+            ],
+            "name": "Families or households that allocate more than 40% of their resources to housing expenditures or services or housing cost burden"
+        },
+        "people_at_risk_of_income_poverty_after_social_transfers": {
+            "position": [
+                28,
+                7
+            ],
+            "name": "People at risk of income poverty after social transfers"
+        },
+        "cost_of_final_residential_energy_consumption_compared_to_gross_family_income": {
+            "position": [
+                33,
+                7
+            ],
+            "name": "Cost of final residential energy Consumption compared to Gross Family Income"
+        },
+        "unemployment_rate": {
+            "position": [
+                35,
+                7
+            ],
+            "name": "Unemployment rate"
+        },
+        "number_of_children": {
+            "position": [
+                36,
+                7
+            ],
+            "name": "number of children"
+        },
+        "number_of_elderly": {
+            "position": [
+                37,
+                7
+            ],
+            "name": "number of elderly"
+        },
+        "as_education_index_population_with_tertiary_education": {
+            "position": [
+                38,
+                7
+            ],
+            "name": "As Education Index: Population with tertiary education"
+        }
+    }
+}
