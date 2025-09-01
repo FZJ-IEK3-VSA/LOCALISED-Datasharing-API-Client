@@ -158,6 +158,23 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP8.5")
         return 0
 
 
+def _get_data_last_update_for_variable(region_data: pd.DataFrame, variable_name: str):
+    """
+    Safely return the data_last_update value for a given variable from region_data.
+    Returns None if the column or value is unavailable.
+    """
+    try:
+        if "data_last_update" not in region_data.columns:
+            return None
+        filtered = region_data[region_data["var_name"] == variable_name]
+        if filtered.empty:
+            return None
+        values = filtered["data_last_update"].values
+        return values[0] if len(values) > 0 else None
+    except Exception:
+        return None
+
+
 def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     """
     Calculate SOIs for a region.
@@ -237,11 +254,14 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                         soi_value = round(soi_value)
 
                 # get data last update
-                data_last_update = region_data[region_data["var_name"] == input_vars[0]]["data_last_update"].values[0]  # the first variable is the one to consider for last update
+                data_last_update = _get_data_last_update_for_variable(
+                    region_data, input_vars[0]
+                )  # the first variable is the one to consider for last update
 
             # cases when its to be left blank
             elif equation == "BLANK":
                 soi_value = ""
+                data_last_update = None
 
             # cases when its directly a variable from DSP
             else:
@@ -249,9 +269,9 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
                 soi_value = dsp_value
 
                 # get data last update
-                data_last_update = region_data[region_data["var_name"] == equation][
-                    "data_last_update"
-                ].values[0]
+                data_last_update = _get_data_last_update_for_variable(
+                    region_data, equation
+                )
 
         # some of the ratio calculations have 0/(0+0). This should result in 0
         except ZeroDivisionError:
@@ -493,9 +513,7 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
     """
     logger.info(f"Starting CoM template filling for {region_code}")
     start = time.time() 
-    # with open("/home/komalve/projects/localisedprofiler/backend/test_jsons/actions_processed.json", "r") as f:
-    #     actions = json.load(f)
-    # logger.info(f"Actions Length-----------------------------------: {len(actions)}")
+
     logger.info(f"Actions: {actions}")
     try:
         # Define file paths
@@ -526,9 +544,11 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
         try:
             workbook = load_workbook(output_file_path)
             actions_sheet_template = workbook["Actions"]
-            for i in range(len(actions)):
-                new_sheet = workbook.copy_worksheet(actions_sheet_template)
-                new_sheet.title = f"Action {i+1}"
+            # Check if actions exist before creating sheets
+            if actions is not None:
+                for i in range(len(actions)):
+                    new_sheet = workbook.copy_worksheet(actions_sheet_template)
+                    new_sheet.title = f"Action {i+1}"
 
         except Exception as e:
             logger.error(f"Failed to load workbook: {str(e)}")
@@ -601,8 +621,9 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
                 raise
         # the above logic fills GHG emissions, Risks & vulnerabilities, Energy poverty assessment
         # Here we fill the actions sheet
-        for i in range(len(actions)):
-            fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
+        if actions is not None:
+            for i in range(len(actions)):
+                fill_actions_sheet(workbook[f"Action {i+1}"], actions[i])
         # comment it out after an initial run
         # this is only to speed up things after the first run
         # with open(os.path.join(output_dir, f"secap_filling_positions.json"), "w") as f:
@@ -641,12 +662,12 @@ def fill_com_template(region_code, soi_df, region_data, sheet_name, actions):
 
 
 if __name__ == "__main__":
-    get_secap_filling_positions()
-    convert_soi_vars_excel_to_json()
-    merge_soi_vars_json_with_secap_filling_positions()
+    # get_secap_filling_positions()
+    # convert_soi_vars_excel_to_json()
+    # merge_soi_vars_json_with_secap_filling_positions()
     region_code = "ES511_08019"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
-    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets")
-    #fill_actions_sheet(region_code="ES511_08019")
-    #get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM_cleaned_v5.xlsx"))
+    fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets", actions=None)
+    # fill_actions_sheet(region_code="ES511_08019")
+    # get_active_dimensions(os.path.join(current_dir, "data", "input", "CoM-Europe_reporting_template_2023_v6.xlsx"))
