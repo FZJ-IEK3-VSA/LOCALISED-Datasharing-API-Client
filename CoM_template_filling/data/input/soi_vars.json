@@ -267,5 +267,6 @@
     "share_of_demand_for_passenger_metro_tram": "share of demand for passenger metro-tram",
     "share_of_demand_for_passenger_walk": "share of demand for passenger walk",
     "occupancy_ldv": "occupancy - LDV",
-    "generation_of_glass_waste_in_the_municipality_per_capita": "Generation of glass waste in the municipality per capita"
+    "generation_of_glass_waste_in_the_municipality_per_capita": "Generation of glass waste in the municipality per capita",
+    "null": null
 }
