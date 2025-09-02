@@ -10,59 +10,67 @@ Four types of datasets can be found in the database:
 ![Alt text](figures/data_overview.png)
 
 - All the datasets are collected for the 27 EU Member States
+- As seen in the table above, the datasets are collected at different spatial resolutions. All the datasets are spatially disaggregated to Local Administrative Units (LAU). Therefore, the datasets can be accessed at any desired spatial resolution. 
 - The decarbonisation pathways are generated using the [European calculator model](https://www.european-calculator.eu/documentation/) 
+- A full list of variables can be found in [variables_with_details_and_tags.xlsx](https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client/blob/develop/CoM_template_filling/data/input/variables_with_details_and_tags.xlsx) 
 
-Step-by-step instructions to access data, published on LOCALISED datasharing platform, via our API client. The official API documentation can be found under http://data.localised-project.eu/api/v1/docs/)
+### Why? 
+The goal of the LOCALISED project is to downscale decarbonisation trajectories consistent with the EU's net-zero targets to local levels, with the aim of supporting local authorities, businesses and citizens in understanding and undertaking mitigation and adaptation actions. In order to perform this downscaling, the project collected a large amount of data at different spatial levels. The LOCALISED project needs this data for its own actions but the resulting datasets are made public and easily available, through this API client. 
 
-0. Before you begin, please make sure you have mamba installed in your base environment:
-    ```bash
-    conda install mamba -c conda-forge
-    ```
+This data for both the present and future, at a very fine spatial resolution, is extremely useful for planners, researchers, and other interested parties.
 
-1. Clone the repository:
+## Getting started
+The official API documentation can be found under http://data.localised-project.eu/dsp/docs/. Here, a step-by-step instructions to install the API client and access the example queries is detailed. 
+
+### Installation 
+1. Install miniforge, if not already installed. 
+
+2. Clone the repository.
     ```bash
     git clone https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client.git
     ```
 
-2. Installing dependencies in a clean conda environment:
+3. Install dependencies and the repo in a clean conda environment.
     ```bash
     cd LOCALISED-Datasharing-API-Client
     mamba env create -f requirements.yml 
     conda activate dsp_client
-    ```
-
-4. Installing the repository:
-    ```bash
     pip install -e.
     ```
 
-5. Run the example Jupyter notebooks -  `examples/single_variable_data.ipynb` and `examples/single_region_data.ipynb`
+### Examples
+Two Jupyter notebooks are prepared to showcase the API client capabilities:
+1. [single_region_data.ipynb](https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client/blob/develop/examples/single_region_data.ipynb): It shows how the data for all the variables can be accessed for a single region, at any spatial level. 
+2. [single_variable_data.ipynb](https://github.com/FZJ-IEK3-VSA/LOCALISED-Datasharing-API-Client/blob/develop/examples/single_variable_data.ipynb): It shows how the data a single variable can be accessed for all the regions, at any spatial level.   
 
-    **Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:**
+Along with the datasets, the metadata relevant to the variables and the regions can be accessed. Please check out the Jupyter notebooks for more details. 
 
-    - `version` --> The DSP version that you want to query. For example: "v1", "v2", etc. **DSP latest version - v5**
+### Parameters
+Depending on type of query, the list of required parameters change. Please refer to the doc strings of each funtion to get the entire list of relevant parameters. They would be a subset of the ones below:
 
-    - `country_code` --> The country for which you wish to query the data. For example: "de", "es", "nl", etc
+- `version` --> The DSP version that you want to query. For example: "v1", "v2", etc. **DSP latest version - v5**
 
-    - `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 
+- `country_code` --> The country for which you wish to query the data. For example: "de", "es", "nl", etc
 
-    - `region_code` --> If you wish to filter on a particular region, provide a region code here. 
-        Please note the following:
-        - Region codes at NUTS0, follow the [EU country codes](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes)
-        - Region codes at NUTS1, NUTS2, and NUTS3 can be found on [Eurostat](https://ec.europa.eu/eurostat/de/web/nuts/local-administrative-units). 
-            These codes are subject to change every 4 years. We follow NUTS 2016 codes. 
-        - Region codes at LAU can be found on [Eurostat](https://ec.europa.eu/eurostat/de/web/nuts/local-administrative-units). 
-            These codes are subject to change every year. We follow LAU2019 for all countries, except France and Italy. For these countries, LAU2018 is followed. 
-            The `region_code` parameter takes LAU codes in the form "< NUTS3 > _ < LAU >". Therefore, please prepend the parent NUTS3 region and an "_" to a LAU code. 
-            For example, LAU code of Eixen, Germany is "13073022". And its parent NUTS3 code is "DE80L". Therefore, `region_code` = "DE80L_13073022". 
+- `spatial_resolution` --> Options - NUTS0, NUTS1, NUTS2, NUTS3, LAU 
 
-            For a list of region codes, please query the region metadata. 
-        
-    - `variable` --> If you wish to get data for a particular variable, provide the name here
+- `region_code` --> If you wish to filter on a particular region, provide a region code here. 
+    Please note the following:
+    - Region codes at NUTS0, follow the [EU country codes](https://ec.europa.eu/eurostat/statistics-explained/index.php?title=Glossary:Country_codes)
+    - Region codes at NUTS1, NUTS2, and NUTS3 can be found on [Eurostat](https://ec.europa.eu/eurostat/de/web/nuts/local-administrative-units). 
+        These codes are subject to change every 4 years. We follow NUTS 2016 codes. 
+    - Region codes at LAU can be found on [Eurostat](https://ec.europa.eu/eurostat/de/web/nuts/local-administrative-units). 
+        These codes are subject to change every year. We follow LAU2019 for all countries, except France and Italy. For these countries, LAU2018 is followed. 
+        The `region_code` parameter takes LAU codes in the form "< NUTS3 > _ < LAU >". Therefore, please prepend the parent NUTS3 region and an "_" to a LAU code. 
+        For example, LAU code of Eixen, Germany is "13073022". And its parent NUTS3 code is "DE80L". Therefore, `region_code` = "DE80L_13073022". 
 
-    - `pathway_description` --> If you wish to filter on a particular EUCalc decarbonisation pathway, provide the name here. Can be either "national" or "with_behavioural_changes"
+        For a list of region codes, please query the region metadata. 
+    
+- `variable` --> If you wish to get data for a particular variable, provide the name here
 
-    - `climate_experiment` --> If you wish to filter on a particular climate experiment, provide the name here. Can be one of "RCP2.6", "RCP4.5", "RCP8.5", "Historical"
+- `pathway_description` --> If you wish to filter on a particular EUCalc decarbonisation pathway, provide the name here. Can be either "national" or "with_behavioural_changes"
+
+- `climate_experiment` --> If you wish to filter on a particular climate experiment, provide the name here. Can be one of "RCP2.6", "RCP4.5", "RCP8.5", "Historical"
 
 ## Citations
 
