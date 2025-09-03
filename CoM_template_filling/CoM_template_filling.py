@@ -230,7 +230,7 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         SECAP_link = row["SECAP_link"]
         SDG_targets = row["SDG_targets"]
         var_unit = row["var_unit"]
-        equation = row["calculation"]
+        equation = row["calculation"].strip() # remove white spaces that might be accidentially introduced in the calculation
 
         equation = equation.replace("\n", " ")
 
