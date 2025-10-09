@@ -3,6 +3,7 @@ import sys
 import re
 import shutil
 import time
+import ast
 from openpyxl import load_workbook, Workbook
 import pandas as pd
 import logging
@@ -91,6 +92,8 @@ def get_dsp_value(variable, region_data, year=2020, climate_experiment="RCP8.5")
     """
     Get value from DSP for a variable
     """
+    variable = variable.strip() # remove white spaces that might be accidentially introduced in the calculation
+
     try:
         if variable.startswith("eucalc_"):
             sub_region_data = region_data[
@@ -174,6 +177,54 @@ def _get_data_last_update_for_variable(region_data: pd.DataFrame, variable_name:
     except Exception:
         return None
 
+def safe_div(a, b, eps=0.0):
+    """
+    Avoid DivisonByZero error by setting result to 0.  
+    """
+    return a / b if abs(b) > eps else 0.0
+
+class SafeDivTransformer(ast.NodeTransformer):
+    def __init__(self, eps=0.0):
+        self.eps = eps
+        super().__init__()
+
+    def visit_BinOp(self, node):
+        self.generic_visit(node)
+        if isinstance(node.op, ast.Div):
+            return ast.Call(
+                func=ast.Name(id='safe_div', ctx=ast.Load()),
+                args=[node.left, node.right, ast.Constant(self.eps)],
+                keywords=[]
+            )
+        return node
+
+def safe_eval(equation: str, vars_dict: dict, eps: float = 0.0) -> float:
+    """
+    Calculate SOI value while avoiding DivisonByZero error.
+
+    :param equation: The SOI calculation equation
+    :type equation: str
+
+    :param vars_dict: Dict containing input variable-value pairs
+    :type vars_dict: dict
+
+    **Default arguments:**
+
+    :param eps: Optional epsilon for near-zero denominators
+    :type eps: float
+
+    :returns: out_result
+    :rtype: float
+    """
+    print(vars_dict)
+    tree = ast.parse(equation, mode='eval')
+    tree = SafeDivTransformer(eps=eps).visit(tree)
+    ast.fix_missing_locations(tree)
+    code = compile(tree, "<expr>", "eval")
+    # Only expose what you need
+    env = {"__builtins__": {}, "safe_div": safe_div, **vars_dict}
+    out_result = eval(code, env, {})
+    return out_result
 
 def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
     """
@@ -230,52 +281,51 @@ def calculate_sois(region_code: str, region_data: pd.DataFrame) -> dict:
         SECAP_link = row["SECAP_link"]
         SDG_targets = row["SDG_targets"]
         var_unit = row["var_unit"]
-        equation = row["calculation"].strip() # remove white spaces that might be accidentially introduced in the calculation
+        equation = row["calculation"]
 
         equation = equation.replace("\n", " ")
 
-        try:
-            # cases where calculations are required
-            if any(symbol in equation for symbol in ["+", "/", "*"]):
-                input_vars = extract_variables(equation)
+        # cases where calculations are required
+        if any(symbol in equation for symbol in ["+", "/", "*"]):
 
-                for input_var in input_vars:
-                    value = get_dsp_value(input_var, region_data)
+            # Get input variable values 
+            vars_dict = {}
+            input_vars = extract_variables(equation)
+                
+            for input_var in input_vars:
+                value = get_dsp_value(input_var, region_data)
 
-                    equation = equation.replace(input_var, str(value))
+                vars_dict[input_var] = value
 
-                # Evaluate the equation
-                if "None" in equation:
-                    soi_value = None
-                else:
-                    soi_value = eval(equation)
-
-                    if soi_var_name.startswith("number_of"):
-                        soi_value = round(soi_value)
-
-                # get data last update
-                data_last_update = _get_data_last_update_for_variable(
-                    region_data, input_vars[0]
-                )  # the first variable is the one to consider for last update
-
-            # cases when its to be left blank
-            elif equation == "BLANK":
-                soi_value = ""
-                data_last_update = None
-
-            # cases when its directly a variable from DSP
+            # Evaluate the equation
+            if any(v is None for v in vars_dict.values()):
+                soi_value = None
             else:
-                dsp_value = get_dsp_value(equation, region_data)
-                soi_value = dsp_value
+                print(soi_name)
+                soi_value = safe_eval(equation, vars_dict)
 
-                # get data last update
-                data_last_update = _get_data_last_update_for_variable(
-                    region_data, equation
-                )
+                if soi_var_name.startswith("number_of"):
+                    soi_value = round(soi_value)
 
-        # some of the ratio calculations have 0/(0+0). This should result in 0
-        except ZeroDivisionError:
-            soi_value = 0
+            # get data last update
+            data_last_update = _get_data_last_update_for_variable(
+                region_data, input_vars[0]
+            )  # the first variable is the one to consider for last update
+
+        # cases when its to be left blank
+        elif equation == "BLANK":
+            soi_value = ""
+            data_last_update = None
+
+        # cases when its directly a variable from DSP
+        else:
+            dsp_value = get_dsp_value(equation, region_data)
+            soi_value = dsp_value
+
+            # get data last update
+            data_last_update = _get_data_last_update_for_variable(
+                region_data, equation
+            )
 
         soi_df.loc[len(soi_df)] = {
             "soi_name": soi_name,
@@ -665,7 +715,7 @@ if __name__ == "__main__":
     # get_secap_filling_positions()
     # convert_soi_vars_excel_to_json()
     # merge_soi_vars_json_with_secap_filling_positions()
-    region_code = "ES511_08019"
+    region_code = "ES513_25227"
     region_data = get_region_data(region_code)
     soi_df = calculate_sois(region_code, region_data)
     fill_com_template(region_code, soi_df, region_data, sheet_name="all_sheets", actions=None)
